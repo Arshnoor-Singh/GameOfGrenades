@@ -6,10 +6,9 @@ public class PivotRotation : MonoBehaviour
 {
     public GameObject CentralPivot;
     public GameObject[] Frame;
-    public int FrameRotationSpeed;
     private GameObject FrameLoc;
     public int FrameDistance;
-    private float RotationTimer;
+    
     public GameObject RandomFrame()
     {
         int n = Random.Range(0, Frame.Length);
@@ -34,6 +33,6 @@ public class PivotRotation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        CentralPivot.transform.Rotate(Vector3.up * (FrameRotationSpeed * Time.deltaTime));
+        
     }
 }
