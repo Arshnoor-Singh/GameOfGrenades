@@ -12,6 +12,10 @@ namespace StarterAssets
 		public Vector2 look;
 		public bool jump;
 		public bool sprint;
+		public bool slide;
+		public bool dive;
+		public bool _throw;
+		public bool prep;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -41,10 +45,32 @@ namespace StarterAssets
 			JumpInput(value.isPressed);
 		}
 
-		public void OnSprint(InputValue value)
+        public void OnSprint(InputValue value)
+        {
+            SprintInput(value.isPressed);
+        }
+
+        public void OnSlide(InputValue value)
 		{
-			SprintInput(value.isPressed);
+			SlideInput(value.isPressed);
 		}
+
+		public void OnDive(InputValue value)
+		{
+			DiveInput(value.isPressed);
+		}
+
+		public void OnPrep(InputValue value)
+		{
+			PrepInput(value.isPressed);
+		}
+
+		public void OnThrow(InputValue value)
+		{
+			ThrowInput(value.isPressed);
+		}
+
+
 #else
 	// old input sys if we do decide to have it (most likely wont)...
 #endif
@@ -65,14 +91,34 @@ namespace StarterAssets
 			jump = newJumpState;
 		}
 
-		public void SprintInput(bool newSprintState)
+		public void SlideInput(bool newSlideState)
 		{
-			sprint = newSprintState;
+			slide = newSlideState;
 		}
+
+		public void DiveInput(bool newDiveState)
+		{
+			dive = newDiveState;
+		}
+
+		public void PrepInput(bool newPrepState)
+		{
+			prep = newPrepState;
+		}
+
+		public void ThrowInput(bool newThrowState)
+		{
+			_throw = newThrowState;
+		}
+
+        public void SprintInput(bool newSprintState)
+        {
+            sprint = newSprintState;
+        }
 
 #if !UNITY_IOS || !UNITY_ANDROID
 
-		private void OnApplicationFocus(bool hasFocus)
+        private void OnApplicationFocus(bool hasFocus)
 		{
 			SetCursorState(cursorLocked);
 		}

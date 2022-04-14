@@ -1,4 +1,18 @@
-﻿using UnityEngine;
+﻿/*
+ * Editing Author:		Ryan Jenkins
+ * Original Author:		Unity
+ * Installation Date:	4/13/2022
+ * Last Updated:		4/14/2022
+ * Description:			A third person character controller integrated to work with Unity's Input System. We will be
+ *						expanding the functionality of this script to match our games design needs including systems
+ *						for diving, sliding, throwing grenades, interfacing with the grenade inventory system, and
+ *						player attributes such as health, playerID and teamID.
+ */
+
+using UnityEngine;
+using System.Collections;
+using UnityEditor;
+using UnityEngine.Serialization;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
 #endif
@@ -14,51 +28,57 @@ namespace StarterAssets
 #endif
 	public class ThirdPersonController : MonoBehaviour
 	{
+		[FormerlySerializedAs("MoveSpeed")]
 		[Header("Player")]
 		[Tooltip("Move speed of the character in m/s")]
-		public float MoveSpeed = 2.0f;
-		[Tooltip("Sprint speed of the character in m/s")]
-		public float SprintSpeed = 5.335f;
+		public float moveSpeed = 2.0f;
+		[FormerlySerializedAs("SprintSpeed")] [Tooltip("Sprint speed of the character in m/s")]
+		public float sprintSpeed = 5.335f;
+		[FormerlySerializedAs("RotationSmoothTime")]
 		[Tooltip("How fast the character turns to face movement direction")]
 		[Range(0.0f, 0.3f)]
-		public float RotationSmoothTime = 0.12f;
-		[Tooltip("Acceleration and deceleration")]
-		public float SpeedChangeRate = 10.0f;
+		public float rotationSmoothTime = 0.12f;
+		[FormerlySerializedAs("SpeedChangeRate")] [Tooltip("Acceleration and deceleration")]
+		public float speedChangeRate = 10.0f;
 
+		[FormerlySerializedAs("JumpHeight")]
 		[Space(10)]
 		[Tooltip("The height the player can jump")]
-		public float JumpHeight = 1.2f;
-		[Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
-		public float Gravity = -15.0f;
+		public float jumpHeight = 1.2f;
+		[FormerlySerializedAs("Gravity")] [Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
+		public float gravity = -15.0f;
 
+		[FormerlySerializedAs("JumpTimeout")]
 		[Space(10)]
 		[Tooltip("Time required to pass before being able to jump again. Set to 0f to instantly jump again")]
-		public float JumpTimeout = 0.50f;
-		[Tooltip("Time required to pass before entering the fall state. Useful for walking down stairs")]
-		public float FallTimeout = 0.15f;
+		public float jumpTimeout = 0.50f;
+		[FormerlySerializedAs("FallTimeout")] [Tooltip("Time required to pass before entering the fall state. Useful for walking down stairs")]
+		public float fallTimeout = 0.15f;
 
+		[FormerlySerializedAs("Grounded")]
 		[Header("Player Grounded")]
 		[Tooltip("If the character is grounded or not. Not part of the CharacterController built in grounded check")]
-		public bool Grounded = true;
-		[Tooltip("Useful for rough ground")]
-		public float GroundedOffset = -0.14f;
-		[Tooltip("The radius of the grounded check. Should match the radius of the CharacterController")]
-		public float GroundedRadius = 0.28f;
-		[Tooltip("What layers the character uses as ground")]
-		public LayerMask GroundLayers;
+		public bool grounded = true;
+		[FormerlySerializedAs("GroundedOffset")] [Tooltip("Useful for rough ground")]
+		public float groundedOffset = -0.14f;
+		[FormerlySerializedAs("GroundedRadius")] [Tooltip("The radius of the grounded check. Should match the radius of the CharacterController")]
+		public float groundedRadius = 0.28f;
+		[FormerlySerializedAs("GroundLayers")] [Tooltip("What layers the character uses as ground")]
+		public LayerMask groundLayers;
 
+		[FormerlySerializedAs("CinemachineCameraTarget")]
 		[Header("Cinemachine")]
 		[Tooltip("The follow target set in the Cinemachine Virtual Camera that the camera will follow")]
-		public GameObject CinemachineCameraTarget;
-		[Tooltip("How far in degrees can you move the camera up")]
-		public float TopClamp = 70.0f;
-		[Tooltip("How far in degrees can you move the camera down")]
-		public float BottomClamp = -30.0f;
-		[Tooltip("Additional degress to override the camera. Useful for fine tuning camera position when locked")]
-		public float CameraAngleOverride = 0.0f;
-		[Tooltip("For locking the camera position on all axis")]
-		public bool LockCameraPosition = false;
-
+		public GameObject cinemachineCameraTarget;
+		[FormerlySerializedAs("TopClamp")] [Tooltip("How far in degrees can you move the camera up")]
+		public float topClamp = 70.0f;
+		[FormerlySerializedAs("BottomClamp")] [Tooltip("How far in degrees can you move the camera down")]
+		public float bottomClamp = -30.0f;
+		[FormerlySerializedAs("CameraAngleOverride")] [Tooltip("Additional degress to override the camera. Useful for fine tuning camera position when locked")]
+		public float cameraAngleOverride = 0.0f;
+		[FormerlySerializedAs("LockCameraPosition")] [Tooltip("For locking the camera position on all axis")]
+		public bool lockCameraPosition = false;
+		
 		// cinemachine
 		private float _cinemachineTargetYaw;
 		private float _cinemachineTargetPitch;
@@ -90,7 +110,22 @@ namespace StarterAssets
 		private const float _threshold = 0.01f;
 
 		private bool _hasAnimator;
-
+		
+		// character states
+		[Header("States")]
+		[SerializeField] private bool _initialized = false;
+		
+		// character attributes
+		[Header("Attributes")]
+		[SerializeField] private int _currentHealth;
+		[SerializeField] private int _maxHealth = 100;
+		[SerializeField] private int _playerID;
+		[SerializeField] private int _teamID;
+		
+		// grenade management
+		[Header("Inventory")]
+		[SerializeField] private GrenadeInventory _inventory;
+		
 		private void Awake()
 		{
 			// get a reference to our main camera
@@ -109,17 +144,25 @@ namespace StarterAssets
 			AssignAnimationIDs();
 
 			// reset our timeouts on start
-			_jumpTimeoutDelta = JumpTimeout;
-			_fallTimeoutDelta = FallTimeout;
+			_jumpTimeoutDelta = jumpTimeout;
+			_fallTimeoutDelta = fallTimeout;
+			
+			// initialize the character to their default values for play
+			_initialized = InitializePlayer();
 		}
 
 		private void Update()
 		{
 			_hasAnimator = TryGetComponent(out _animator);
-			
-			JumpAndGravity();
+
+			if (!_animator.GetBool("isSliding") && !_animator.GetBool("isDiving"))
+			{
+				JumpAndGravity();
+			}
 			GroundedCheck();
 			Move();
+
+		
 		}
 
 		private void LateUpdate()
@@ -139,20 +182,20 @@ namespace StarterAssets
 		private void GroundedCheck()
 		{
 			// set sphere position, with offset
-			Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z);
-			Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers, QueryTriggerInteraction.Ignore);
+			Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - groundedOffset, transform.position.z);
+			grounded = Physics.CheckSphere(spherePosition, groundedRadius, groundLayers, QueryTriggerInteraction.Ignore);
 
 			// update animator if using character
 			if (_hasAnimator)
 			{
-				_animator.SetBool(_animIDGrounded, Grounded);
+				_animator.SetBool(_animIDGrounded, grounded);
 			}
 		}
 
 		private void CameraRotation()
 		{
 			// if there is an input and camera position is not fixed
-			if (_input.look.sqrMagnitude >= _threshold && !LockCameraPosition)
+			if (_input.look.sqrMagnitude >= _threshold && !lockCameraPosition)
 			{
 				_cinemachineTargetYaw += _input.look.x * Time.deltaTime;
 				_cinemachineTargetPitch += _input.look.y * Time.deltaTime;
@@ -160,16 +203,18 @@ namespace StarterAssets
 
 			// clamp our rotations so our values are limited 360 degrees
 			_cinemachineTargetYaw = ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
-			_cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
+			_cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, bottomClamp, topClamp);
 
 			// Cinemachine will follow this target
-			CinemachineCameraTarget.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + CameraAngleOverride, _cinemachineTargetYaw, 0.0f);
+			cinemachineCameraTarget.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + cameraAngleOverride, _cinemachineTargetYaw, 0.0f);
 		}
 
 		private void Move()
 		{
 			// set target speed based on move speed, sprint speed and if sprint is pressed
-			float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
+			//float targetSpeed = _input.sprint ? sprintSpeed : moveSpeed;
+
+			float targetSpeed = moveSpeed;
 
 			// a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
@@ -188,7 +233,7 @@ namespace StarterAssets
 			{
 				// creates curved result rather than a linear one giving a more organic speed change
 				// note T in Lerp is clamped, so we don't need to clamp our speed
-				_speed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed * inputMagnitude, Time.deltaTime * SpeedChangeRate);
+				_speed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed * inputMagnitude, Time.deltaTime * speedChangeRate);
 
 				// round speed to 3 decimal places
 				_speed = Mathf.Round(_speed * 1000f) / 1000f;
@@ -197,7 +242,7 @@ namespace StarterAssets
 			{
 				_speed = targetSpeed;
 			}
-			_animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * SpeedChangeRate);
+			_animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * speedChangeRate);
 
 			// normalise input direction
 			Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
@@ -207,7 +252,7 @@ namespace StarterAssets
 			if (_input.move != Vector2.zero)
 			{
 				_targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + _mainCamera.transform.eulerAngles.y;
-				float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, RotationSmoothTime);
+				float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, rotationSmoothTime);
 
 				// rotate to face input direction relative to camera position
 				transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
@@ -225,14 +270,65 @@ namespace StarterAssets
 				_animator.SetFloat(_animIDSpeed, _animationBlend);
 				_animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
 			}
+
+			if (_input.sprint && grounded && _input.move != Vector2.zero && !_animator.GetBool("isDiving"))
+			{
+				_animator.SetBool("isSliding", true);
+				_animator.applyRootMotion = true;
+			}
+
+			if (_input.dive && grounded && !_animator.GetBool("isSliding"))
+			{
+				_animator.SetBool("isDiving", true);
+				_animator.applyRootMotion = true;
+			}
+
+			if (_input._throw && grounded && !_animator.GetBool("isSliding") && !_animator.GetBool("isDiving"))
+			{
+				Debug.Log("throw");
+				_animator.SetBool("isThrowing", true);
+				_animator.applyRootMotion = true;
+				StartCoroutine(StopThrowing());
+			}
+
+
 		}
+
+		IEnumerator StopThrowing()
+        {
+			yield return new WaitForSeconds(1.5f);
+			_animator.SetBool("isThrowing", false);
+			_animator.applyRootMotion = false;
+
+		}
+		
+
+		public void StopSlide()
+		{
+			_animator.SetBool("isSliding", false);
+			_animator.applyRootMotion = false;
+		}
+
+		public void StopDive()
+		{
+			_animator.SetBool("isDiving", false);
+			_animator.applyRootMotion = false;
+		}
+
+		//public void StopThrow()
+  //      {
+		//	_animator.SetBool("isThrowing", false);
+		//	_animator.applyRootMotion = false;
+		//}
+
+		
 
 		private void JumpAndGravity()
 		{
-			if (Grounded)
+			if (grounded)
 			{
 				// reset the fall timeout timer
-				_fallTimeoutDelta = FallTimeout;
+				_fallTimeoutDelta = fallTimeout;
 
 				// update animator if using character
 				if (_hasAnimator)
@@ -251,7 +347,7 @@ namespace StarterAssets
 				if (_input.jump && _jumpTimeoutDelta <= 0.0f)
 				{
 					// the square root of H * -2 * G = how much velocity needed to reach desired height
-					_verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
+					_verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
 
 					// update animator if using character
 					if (_hasAnimator)
@@ -269,7 +365,7 @@ namespace StarterAssets
 			else
 			{
 				// reset the jump timeout timer
-				_jumpTimeoutDelta = JumpTimeout;
+				_jumpTimeoutDelta = jumpTimeout;
 
 				// fall timeout
 				if (_fallTimeoutDelta >= 0.0f)
@@ -292,7 +388,7 @@ namespace StarterAssets
 			// apply gravity over time if under terminal (multiply by delta time twice to linearly speed up over time)
 			if (_verticalVelocity < _terminalVelocity)
 			{
-				_verticalVelocity += Gravity * Time.deltaTime;
+				_verticalVelocity += gravity * Time.deltaTime;
 			}
 		}
 
@@ -308,11 +404,53 @@ namespace StarterAssets
 			Color transparentGreen = new Color(0.0f, 1.0f, 0.0f, 0.35f);
 			Color transparentRed = new Color(1.0f, 0.0f, 0.0f, 0.35f);
 
-			if (Grounded) Gizmos.color = transparentGreen;
+			if (grounded) Gizmos.color = transparentGreen;
 			else Gizmos.color = transparentRed;
 			
 			// when selected, draw a gizmo in the position of, and matching radius of, the grounded collider
-			Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z), GroundedRadius);
+			Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y - groundedOffset, transform.position.z), groundedRadius);
 		}
+
+		// Deal damage to the player and check to see if they were killed and what attack source killed them
+		public void Damage(int value, int attackerID)
+		{
+			
+		}
+
+		// Moves the character based on the provided force amount and direction
+		public void AddForce(float force, Vector3 direction)
+		{
+			
+		}
+
+		// Initializes the the players character to prepare them for play
+		private bool InitializePlayer()
+		{
+			// set the playerID to the next ID according to the Game Manager
+			
+			_currentHealth = _maxHealth; // set the characters current health value
+
+			// get the characters team from the Game Manager
+			
+			// set the characters spawn location
+			
+			// set the characters grenade inventory
+			
+			// set the characters control device
+			
+			return true; // returns true once the player is done being initialized
+		}
+
+		private void Respawn()
+		{
+			// reset the players health
+		}
+		
+		// Returns the players ID
+		public int GetPlayerID()
+		{
+			return _playerID;
+		}
+		
 	}
 }
