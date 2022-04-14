@@ -21,13 +21,6 @@ public class Grenade_Base : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //***********DEBUG*************
-        if(Input.GetKeyDown(KeyCode.W))
-        {
-            Launch(DebugDir);
-        }
-        //*****************************
-
         if(HasCooking && CookingStarted)
         {
             CookingTime -= Time.deltaTime;
