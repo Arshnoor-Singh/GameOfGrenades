@@ -5,16 +5,16 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 637854999539354126
-    m_Hash: 3146976498
+      ticks: 637855003576590443
+    m_Hash: 1101919925
   m_LockFileStatus:
     m_FilePath: D:/Work/FS/PTC/Unity Projecy/GameOfGrenades/Game of Grenades/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 637854999571932264
-    m_Hash: 1960407345
+      ticks: 637855003576640272
+    m_Hash: 3062110908
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_PackageAssets:
@@ -823,12 +823,12 @@ m_PackageAssets:
         url: https://github.com/Unity-Technologies/InputSystem.git
         revision: 76d3fd182183dff9e9793431de614fd1e69e363c
         path: 
-    - packageId: com.unity.postprocessing@2.3.0
+    - packageId: com.unity.postprocessing@3.2.1
       testable: 0
       isDirectDependency: 1
-      version: 2.3.0
+      version: 3.2.1
       source: 1
-      resolvedPath: D:\Work\FS\PTC\Unity Projecy\GameOfGrenades\Game of Grenades\Library\PackageCache\com.unity.postprocessing@2.3.0
+      resolvedPath: D:\Work\FS\PTC\Unity Projecy\GameOfGrenades\Game of Grenades\Library\PackageCache\com.unity.postprocessing@3.2.1
       assetPath: Packages/com.unity.postprocessing
       name: com.unity.postprocessing
       displayName: Post Processing
@@ -889,8 +889,12 @@ m_PackageAssets:
         - 3.2.0
         - 3.2.1
         verified: 3.2.1
-      dependencies: []
-      resolvedDependencies: []
+      dependencies:
+      - name: com.unity.modules.physics
+        version: 1.0.0
+      resolvedDependencies:
+      - name: com.unity.modules.physics
+        version: 1.0.0
       keywords: []
       registry:
         id: main
@@ -904,13 +908,13 @@ m_PackageAssets:
       entitlements:
         isAllowed: 1
       isAssetStorePackage: 0
-      datePublishedTicks: 637144563160000000
+      datePublishedTicks: 637810554450000000
       documentationUrl: 
       hasRepository: 1
       repository:
         type: git
-        url: git@github.com:Unity-Technologies/PostProcessing.git
-        revision: e6de985c41f04a5fc7c7227dd67e3e73fac834e7
+        url: https://github.com/Unity-Technologies/Graphics.git
+        revision: ffa21b54c20545786dd5e691f58f41468f0c153a
         path: 
     - packageId: com.unity.probuilder@4.5.2
       testable: 0
