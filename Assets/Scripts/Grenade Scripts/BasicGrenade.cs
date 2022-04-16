@@ -50,7 +50,7 @@ public class BasicGrenade : MonoBehaviour
 
             if(affectedObjects.tag == "Player")
             {
-                
+                //Deal damage
             }
         }
 

@@ -13,9 +13,13 @@ public class Grenade_Base : MonoBehaviour
     public float GrenadeVelocity = 0f;
     public float CookingTime = 3f;
     public Vector3 DebugDir;
+
+    Transform grenadeSocket;
+    bool Thrown = false;
     // Start is called before the first frame update
     void Start()
     {
+        
     }
 
     // Update is called once per frame
@@ -25,15 +29,27 @@ public class Grenade_Base : MonoBehaviour
         {
             CookingTime -= Time.deltaTime;
         }
+
+        //if(Thrown == false)
+        //{
+        //    transform.position = grenadeSocket.position;
+        //    transform.rotation = grenadeSocket.rotation;
+        //}
     }
 
     public void Launch (Vector3 dir)
     {
-        transform.GetComponent<Rigidbody>().AddForce(dir * GrenadeVelocity);
+        transform.GetComponent<Rigidbody>().AddForce(dir * GrenadeVelocity, ForceMode.Impulse);
+        Thrown = true;
     }
 
     public void StartCooking()
     {
         CookingStarted = true;
+    }
+
+    public void SetGrenadeSocket(Transform socketRef)
+    {
+        grenadeSocket = socketRef;
     }
 }
