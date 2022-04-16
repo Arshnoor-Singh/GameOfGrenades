@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7450544264916643013}
   - component: {fileID: -6933659977715626153}
   - component: {fileID: -5746660879445614570}
+  - component: {fileID: 8100572815372016697}
   m_Layer: 0
   m_Name: The donut
   m_TagString: Untagged
@@ -126,16 +127,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _grenadePrephab: {fileID: 582260136348789898}
-  tripMineName: 
-  tripMineDescription: 
+  tripMineName: The Donut
+  tripMineDescription: A delicious and dangerous piece of mastercrafted goodness
+    that will slow players.
+  tripMineDamage: 0
   stack: 4
   _grenadeVelocity: 0
-  _cookingTime: 0
+  _cookingTime: 5
   constantVelocity: 0
-  canBounce: 0
-  grenadeBounce: 0
+  canBounce: 1
+  grenadeBounce: 2
+  slowPlayer: 0.65
   sticksToPlayers: 1
   _explodesWithCookingTime: 1
-  hasCooking: 0
+  _useBuiltInExplosionSystem: 1
   cookingStarted: 0
   _isAboutToExplode: 0
+--- !u!114 &8100572815372016697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 582260136348789898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f62d8c354c8d0543944306aeaaf65a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _theDonut: {fileID: 582260136348789898}
