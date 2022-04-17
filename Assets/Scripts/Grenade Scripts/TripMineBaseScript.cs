@@ -17,7 +17,7 @@
  * 
  *  Use the followint:
  *  1. Every class that utilizes this script should hare this as a requirement
- *        [RequireComponent(typeof(TripMineBaseScript))]
+ *      [RequireComponent(typeof(TripMineBaseScript))]
  *    
  *      Available functions to call for other classes:
  *      1. Launch(Vector3 dir);
@@ -44,7 +44,7 @@ public class TripMineBaseScript : MonoBehaviour
 
     //Trip mine grenade settings
     [Tooltip("Enter the prephab that this script will spawn")]
-    [SerializeField] private GameObject _grenadePrephab = null;
+    [SerializeField] private GameObject _grenadePrephab = null; //stores the prephab of the grenade
     [Tooltip("Name of the grenade")]
     [SerializeField] public string tripMineName = null; //stores the name of the grenade
     [Tooltip("Name of the grenade")]
