@@ -8,18 +8,16 @@ using UnityEngine.UI;
 public class SettingsMenu : MonoBehaviour
 {
     public AudioMixer mm;
-    public AudioMixer em;
-    public AudioMixer vm;
 
     Resolution[] resolutions;
     public Dropdown resDrop;
+    public Dropdown qualDrop;
     int currentRes = 0;
 
     private bool pause;
 
     void Start()
     {
-        Debug.Log(resDrop.name);
         pause = false;
         resolutions = Screen.resolutions;
         resDrop.ClearOptions();
@@ -42,35 +40,35 @@ public class SettingsMenu : MonoBehaviour
     //Audio
     public void setMusicVolume(float vol)
     {
-        mm.SetFloat("volume", vol);
+        mm.SetFloat("MusicVolume", vol);
     }
 
     public void setEffectsVolume(float vol)
     {
-        em.SetFloat("volume", vol);
+        mm.SetFloat("SFXVolume", vol);
     }
 
     public void setVoiceVolume(float vol)
     {
-        vm.SetFloat("volume", vol);
+        mm.SetFloat("VoiceVolume", vol);
     }
 
     //Graphics
     public void setQuality(int qIndex)
     {
         QualitySettings.SetQualityLevel(qIndex);
+        qualDrop.GetComponent<AudioSource>().Play();
     }
 
     public void setScreenSize(int sIndex)
     {
         Screen.SetResolution(resolutions[sIndex].width, resolutions[sIndex].height, false);
         Debug.Log("bbbbbbb");
+        qualDrop.GetComponent<AudioSource>().Play();
     }
 
     public void showSettingsMenu()
     {
-        GameObject settingsPanel;
-        GameObject sss;
 
     }
 }
