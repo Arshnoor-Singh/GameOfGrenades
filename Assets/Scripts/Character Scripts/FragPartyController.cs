@@ -104,7 +104,6 @@ namespace FragParty
 		private int _animIDMotionSpeed;
 		private int _animIDSlide;
 		private int _animIDDive;
-		private int _animIDHold;
 		private int _animIDToss;
 
 		private Animator _animator;
