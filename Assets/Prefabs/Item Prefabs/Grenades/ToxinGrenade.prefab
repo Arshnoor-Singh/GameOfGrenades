@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &536405069169474066
+--- !u!1 &6955361656498992478
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,49 +8,49 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 536405069169474062}
-  - component: {fileID: 536405069169474065}
-  - component: {fileID: 536405069169474064}
-  - component: {fileID: 536405069169474067}
-  - component: {fileID: 536405069169474063}
-  - component: {fileID: 536405069169474060}
-  - component: {fileID: 5651574177014585604}
+  - component: {fileID: 6955361656498992450}
+  - component: {fileID: 6955361656498992477}
+  - component: {fileID: 6955361656498992476}
+  - component: {fileID: 6955361656498992479}
+  - component: {fileID: 6955361656498992451}
+  - component: {fileID: 6955361656498992448}
+  - component: {fileID: 6955361656498992475}
   m_Layer: 0
-  m_Name: BasicGrenade
+  m_Name: ToxinGrenade
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &536405069169474062
+--- !u!4 &6955361656498992450
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 536405069169474066}
+  m_GameObject: {fileID: 6955361656498992478}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.134, y: 1.123, z: -7.64}
+  m_LocalPosition: {x: 0, y: 0.305, z: 0.228}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &536405069169474065
+--- !u!33 &6955361656498992477
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 536405069169474066}
+  m_GameObject: {fileID: 6955361656498992478}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &536405069169474064
+--- !u!23 &6955361656498992476
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 536405069169474066}
+  m_GameObject: {fileID: 6955361656498992478}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -85,44 +85,44 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &536405069169474067
+--- !u!135 &6955361656498992479
 SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 536405069169474066}
+  m_GameObject: {fileID: 6955361656498992478}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &536405069169474063
+--- !u!114 &6955361656498992451
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 536405069169474066}
+  m_GameObject: {fileID: 6955361656498992478}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9216136faa5bff3449de42cd32029a48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   HasCooking: 1
-  MaxGrenades: 0
-  Cooldown: 0
+  MaxGrenades: 1
+  Cooldown: 15
   GrenadeVelocity: 100
   CookingTime: 3
   DebugDir: {x: 0, y: 0, z: 1}
---- !u!54 &536405069169474060
+--- !u!54 &6955361656498992448
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 536405069169474066}
+  m_GameObject: {fileID: 6955361656498992478}
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 0
@@ -132,20 +132,17 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &5651574177014585604
+--- !u!114 &6955361656498992475
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 536405069169474066}
+  m_GameObject: {fileID: 6955361656498992478}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d366bff5b7575b4b8818b3f90cb8aeb, type: 3}
+  m_Script: {fileID: 11500000, guid: d55b436412af64948aa9a33698dc9754, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ExplosionEffect: {fileID: 4283302167381187242, guid: 2f33464ea42102c4597085aa81b3d47d,
+  toxinEffect: {fileID: 2843779310413003488, guid: 2124a43916792884f810a26533ad4667,
     type: 3}
-  radious: 5
-  force: 1000
-  damage: 0

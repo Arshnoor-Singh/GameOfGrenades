@@ -14,12 +14,14 @@ public class Grenade_Base : MonoBehaviour
     public float CookingTime = 3f;
     public Vector3 DebugDir;
 
+
     Transform grenadeSocket;
     bool Thrown = false;
     // Start is called before the first frame update
     void Start()
     {
-        
+        //DEBUG
+        CookingStarted = true;
     }
 
     // Update is called once per frame
