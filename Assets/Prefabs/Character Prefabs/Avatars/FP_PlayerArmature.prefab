@@ -955,11 +955,11 @@ MonoBehaviour:
   moveSpeed: 6
   slideTime: 1.2
   diveTime: 1.4
-  rotationSpeed: 0
+  rotationSpeed: 1
   rotationSmoothTime: 0.06
   speedChangeRate: 10
-  jumpHeight: 2
-  gravity: -15
+  jumpHeight: 1.75
+  gravity: -12
   jumpTimeout: 0.5
   fallTimeout: 0.15
   grounded: 1
@@ -989,7 +989,7 @@ MonoBehaviour:
   pushLayers:
     serializedVersion: 2
     m_Bits: 0
-  canPush: 0
+  canPush: 1
   strength: 1.1
 --- !u!114 &4053721543856377514
 MonoBehaviour:

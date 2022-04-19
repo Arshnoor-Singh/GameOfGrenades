@@ -11,7 +11,6 @@ namespace FragParty
         public Vector2 move;
         public Vector2 look;
         public bool jump;
-        public bool sprint;
         public bool dive;
         public bool slide;
         public bool toss;
@@ -42,11 +41,6 @@ namespace FragParty
         public void OnJump(InputValue value)
         {
             JumpInput(value.isPressed);
-        }
-
-        public void OnSprint(InputValue value)
-        {
-            SprintInput(value.isPressed);
         }
 
         public void OnDive(InputValue value)
@@ -82,12 +76,7 @@ namespace FragParty
         {
             jump = newJumpState;
         }
-
-        public void SprintInput(bool newSprintState)
-        {
-            sprint = newSprintState;
-        }
-
+        
         public void DiveInput(bool newDiveState)
         {
             dive = newDiveState;

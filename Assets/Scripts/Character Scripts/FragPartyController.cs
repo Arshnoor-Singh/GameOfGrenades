@@ -27,8 +27,8 @@ namespace FragParty
 		[Tooltip("Dive time of the character in seconds")]
 		public float diveTime = 0.4f;
 		[Tooltip("The speed the character and camera rotate in place")]
-		[Range(0.01f, 100f)]
-		public bool rotationSpeed;
+		[Range(0.01f, 10f)]
+		public float rotationSpeed = 1f;
 		[Tooltip("How fast the character turns to face movement direction")]
 		[Range(0.0f, 0.3f)]
 		public float rotationSmoothTime = 0.12f;
@@ -87,7 +87,6 @@ namespace FragParty
 		// player
 		private float _speed;
 		private Vector2 _movementSpeed;
-		private float _animationBlend;
 		private float _animationBlendHorizontal;
 		private float _animationBlendVertical;
 		private float _targetRotation = 0.0f;
@@ -104,7 +103,6 @@ namespace FragParty
 		private float _diveTime;
 		
 		// animation IDs
-		private int _animIDSpeed;
 		private int _animIDVerticalMovement;
 		private int _animIDHorizontalMovement;
 		private int _animIDGrounded;
@@ -119,7 +117,7 @@ namespace FragParty
 		private CharacterController _controller;
 		private FragPartyInputs _input;
 
-		private const float _threshold = 0.01f;
+		private const float _THRESHOLD = 0.01f;
 
 		private bool _hasAnimator;
 
@@ -171,7 +169,6 @@ namespace FragParty
 
 		private void AssignAnimationIDs()
 		{
-			_animIDSpeed = Animator.StringToHash("Speed");
 			_animIDGrounded = Animator.StringToHash("Grounded");
 			_animIDJump = Animator.StringToHash("Jump");
 			_animIDFreeFall = Animator.StringToHash("FreeFall");
@@ -200,7 +197,7 @@ namespace FragParty
 		private void CameraRotation()
 		{
 			// if there is an input and camera position is not fixed
-			if (_input.look.sqrMagnitude >= _threshold && !lockCameraPosition)
+			if (_input.look.sqrMagnitude >= _THRESHOLD && !lockCameraPosition)
 			{
 				_cinemachineTargetYaw += _input.look.x * Time.deltaTime;
 				_cinemachineTargetPitch += _input.look.y * Time.deltaTime;
