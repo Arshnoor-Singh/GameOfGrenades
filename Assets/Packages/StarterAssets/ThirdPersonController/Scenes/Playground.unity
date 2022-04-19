@@ -796,32 +796,6 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 1470341560}
-    - target: {fileID: 4053721543856377505, guid: d3d11038eb319d246a0d2df00c5ba4a8,
-        type: 3}
-      propertyPath: m_Actions
-      value: 
-      objectReference: {fileID: -944628639613478452, guid: cdbdf30ba36c491459ac1f9597e1f3cf,
-        type: 3}
-    - target: {fileID: 4053721543856377515, guid: d3d11038eb319d246a0d2df00c5ba4a8,
-        type: 3}
-      propertyPath: diveSpeed
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 4053721543856377515, guid: d3d11038eb319d246a0d2df00c5ba4a8,
-        type: 3}
-      propertyPath: slideTime
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4053721543856377515, guid: d3d11038eb319d246a0d2df00c5ba4a8,
-        type: 3}
-      propertyPath: slideSpeed
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 4053721543856377515, guid: d3d11038eb319d246a0d2df00c5ba4a8,
-        type: 3}
-      propertyPath: sprintSpeed
-      value: 6
-      objectReference: {fileID: 0}
     - target: {fileID: 4053721543856377517, guid: d3d11038eb319d246a0d2df00c5ba4a8,
         type: 3}
       propertyPath: m_Name
