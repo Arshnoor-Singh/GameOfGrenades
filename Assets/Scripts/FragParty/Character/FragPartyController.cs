@@ -1,15 +1,12 @@
-using System.Runtime.CompilerServices;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Serialization;
-#if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
+#if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 #endif
 
 /* Note: animations are called via the controller for both the character and capsule using animator null checks
  */
 
-namespace FragParty
+namespace FragParty.Character
 {
 	[RequireComponent(typeof(CharacterController))]
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
@@ -18,14 +15,14 @@ namespace FragParty
 	public class FragPartyController : MonoBehaviour
 	{
 		[Header("Player")]
-		// [Tooltip("Move speed of the character in m/s")]
-		// public float moveSpeed = 2.0f;
-		[Tooltip("Sprint speed of the character in m/s")]
+		[Tooltip("Movement speed of the character in m/s")]
 		public float moveSpeed = 6.0f;
 		[Tooltip("Slide time of the character in seconds")] 
 		public float slideTime = 0.6f;
 		[Tooltip("Dive time of the character in seconds")]
 		public float diveTime = 0.4f;
+		[Tooltip("Boolean to set if the player should currently rotate to face away from the camera")]
+		public bool updateRotation = true;
 		[Tooltip("The speed the character and camera rotate in place")]
 		[Range(0.01f, 10f)]
 		public float rotationSpeed = 1f;
@@ -46,12 +43,6 @@ namespace FragParty
 		public float jumpTimeout = 0.50f;
 		[Tooltip("Time required to pass before entering the fall state. Useful for walking down stairs")]
 		public float fallTimeout = 0.15f;
-		// [Tooltip("Time required to pass before being able to slide again. Set to 0f to instantly slide again")]
-		// public float slideTimeout = 0.50f;
-		// [Tooltip("Time required to pass before being able to dive again. Set to 0f to instantly dive again")]
-		// public float diveTimeout = 0.50f;
-		// [Tooltip("Time required to pass before being able to throw again. Set to 0f to instantly throw again")]
-		// public float tossTimeout = 0.50f;
 
 		[Space(10)]
 		[Header("Player Grounded")]
@@ -86,7 +77,6 @@ namespace FragParty
 
 		// player
 		private float _speed;
-		private Vector2 _movementSpeed;
 		private float _animationBlendHorizontal;
 		private float _animationBlendVertical;
 		private float _targetRotation = 0.0f;
@@ -94,11 +84,11 @@ namespace FragParty
 		private float _verticalVelocity;
 		private float _terminalVelocity = 53.0f;
 
-		// timeout deltatime
+		// timeout delta-time
 		private float _jumpTimeoutDelta;
 		private float _fallTimeoutDelta;
 
-		// locomation timers
+		// locomotion timers
 		private float _slideTime;
 		private float _diveTime;
 		
@@ -213,25 +203,18 @@ namespace FragParty
 
 		private void Move()
 		{
-			// note: Vector2's != operator uses approximation so is not floating point error prone, and is cheaper than magnitude
 			// if there is a move input rotate player when the player is moving
-			// if (_input.move != Vector2.zero)
-			if (true)
+			if (updateRotation)
 			{
-				// _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + playerCamera.transform.eulerAngles.y;
 				_targetRotation = playerCamera.transform.eulerAngles.y;
 				float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, rotationSmoothTime);
-			
-				// rotate to face input direction relative to camera position
-				transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+				transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f); // rotate to face input direction relative to camera position
 			}
+			
+			float targetSpeed = moveSpeed; // set target speed based on move speed
 
-			// set target speed based on move speed, sprint speed and if sprint is pressed
-			float targetSpeed = moveSpeed;
-
-			// a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
-
-			// note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
+			// a simplistic acceleration and deceleration
+			
 			// if there is no input, set the target speed to 0
 			if (_input.move == Vector2.zero)
 			{
@@ -239,42 +222,38 @@ namespace FragParty
 			}
 			
 			// a reference to the players current horizontal velocity
-			var velocity = _controller.velocity;
+			var velocity = _controller.velocity; 
 			float currentMovementSpeed = new Vector3(velocity.x, 0.0f, velocity.z).magnitude;
-			var clampedSpeed = new Vector2(
-				Mathf.Clamp(moveSpeed * Mathf.Abs(_input.move.x), 0f, moveSpeed) * Mathf.Sign(_input.move.x),
-				Mathf.Clamp(moveSpeed * Mathf.Abs(_input.move.y), 0f, moveSpeed) * Mathf.Sign(_input.move.y));
 
 			float speedOffset = 0.1f;
 			float inputMagnitude = _input.analogMovement ? _input.move.magnitude : 1f;
 
 			// accelerate or decelerate to target speed
-			if (currentMovementSpeed < targetSpeed - speedOffset ||
-			    currentMovementSpeed > targetSpeed + speedOffset)
+			if (currentMovementSpeed < targetSpeed - speedOffset || currentMovementSpeed > targetSpeed + speedOffset)
 			{
 				// creates curved result rather than a linear one giving a more organic speed change
 				// note T in Lerp is clamped, so we don't need to clamp our speed
 				_speed = Mathf.Lerp(currentMovementSpeed, targetSpeed * inputMagnitude, Time.deltaTime * speedChangeRate);
-				_movementSpeed.x = Mathf.Lerp(velocity.x, clampedSpeed.x, Time.deltaTime * speedChangeRate);
-				_movementSpeed.y = Mathf.Lerp(velocity.y, clampedSpeed.y, Time.deltaTime * speedChangeRate);
+				// _movementSpeed.x = Mathf.Lerp(velocity.x, clampedSpeed.x, Time.deltaTime * speedChangeRate);
+				// _movementSpeed.y = Mathf.Lerp(velocity.y, clampedSpeed.y, Time.deltaTime * speedChangeRate);
 
 				// round speed to 3 decimal places
 				_speed = Mathf.Round(_speed * 1000f) / 1000f;
-				_movementSpeed.x = Mathf.Round(_movementSpeed.x * 1000f) / 1000f;
-				_movementSpeed.y = Mathf.Round(_movementSpeed.y * 1000f) / 1000f;
+				// _movementSpeed.x = Mathf.Round(_movementSpeed.x * 1000f) / 1000f;
+				// _movementSpeed.y = Mathf.Round(_movementSpeed.y * 1000f) / 1000f;
 			}
 			else
 			{
 				_speed = targetSpeed;
-				_movementSpeed = new Vector2(
-					Mathf.Round(clampedSpeed.x * 1000f) / 1000f,
-					Mathf.Round(clampedSpeed.y * 1000f) / 1000f);
+				// _movementSpeed = new Vector2(Mathf.Round(clampedSpeed.x * 1000f) / 1000f, Mathf.Round(clampedSpeed.y * 1000f) / 1000f);
 			}
 			
 			// update the blend state parameter
-			// _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * speedChangeRate);
-			_animationBlendHorizontal = Mathf.Lerp(_animationBlendHorizontal, _movementSpeed.x, Time.deltaTime * speedChangeRate);
-			_animationBlendVertical = Mathf.Lerp(_animationBlendVertical, _movementSpeed.y, Time.deltaTime * speedChangeRate);
+			Vector2 targetDirectionalSpeed = _input.move * targetSpeed;
+			targetDirectionalSpeed.x = Mathf.Round(targetDirectionalSpeed.x * 1000f) / 1000f;
+			targetDirectionalSpeed.y = Mathf.Round(targetDirectionalSpeed.y * 1000f) / 1000f;
+			_animationBlendHorizontal = Mathf.Lerp(_animationBlendHorizontal, targetDirectionalSpeed.x, Time.deltaTime * speedChangeRate);
+			_animationBlendVertical = Mathf.Lerp(_animationBlendVertical, targetDirectionalSpeed.y, Time.deltaTime * speedChangeRate);
 
 			// normalise input direction
 			Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
@@ -283,12 +262,9 @@ namespace FragParty
 			Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * inputDirection;
 
 			// move the player
-			_controller.Move(targetDirection * (_speed * Time.deltaTime) +
-			                 new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
-			// _controller.Move((new Vector3(_movementSpeed.x, 0.0f, _movementSpeed.y) * Time.deltaTime) + 
-			//                  new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+			_controller.Move(targetDirection * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 
-			// update animator if using character
+			// update animator if using characters
 			if (_hasAnimator)
 			{
 				// _animator.SetFloat(_animIDSpeed, _animationBlend);
@@ -548,8 +524,7 @@ namespace FragParty
 			Color transparentGreen = new Color(0.0f, 1.0f, 0.0f, 0.35f);
 			Color transparentRed = new Color(1.0f, 0.0f, 0.0f, 0.35f);
 
-			if (grounded) Gizmos.color = transparentGreen;
-			else Gizmos.color = transparentRed;
+			Gizmos.color = grounded ? transparentGreen : transparentRed;
 			
 			// when selected, draw a gizmo in the position of, and matching radius of, the grounded collider
 			var position = transform.position;
