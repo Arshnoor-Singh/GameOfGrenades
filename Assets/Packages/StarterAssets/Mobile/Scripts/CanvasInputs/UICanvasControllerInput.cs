@@ -27,26 +27,7 @@ namespace StarterAssets
         {
             starterAssetsInputs.SprintInput(virtualSprintState);
         }
-
-        public void VirtualSlideInput(bool virtualSlideState)
-        {
-            starterAssetsInputs.SlideInput(virtualSlideState);
-        }
-
-        public void VirtualDiveInput(bool virtualDiveState)
-        {
-            starterAssetsInputs.DiveInput(virtualDiveState);
-        }
-
-        public void VirtualPrepInput(bool virtualPrepState)
-        {
-            starterAssetsInputs.PrepInput(virtualPrepState);
-        }
-
-        public void VirtualThrowInput(bool virtualThrowState)
-        {
-            starterAssetsInputs.ThrowInput(virtualThrowState);
-        }
+        
     }
 
 }
