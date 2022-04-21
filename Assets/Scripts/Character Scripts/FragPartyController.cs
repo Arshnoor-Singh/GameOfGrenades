@@ -16,7 +16,6 @@ using UnityEngine.InputSystem;
 
 #region RequiredComponents
 [RequireComponent(typeof(Animator))]
-[RequireComponent(typeof(CharacterController))]
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(FragPartyInputs))]
@@ -25,13 +24,12 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(BasicRigidBodyPush))]
 #endregion
-
 public class FragPartyController : MonoBehaviour
 {
 	#region PublicFields
-
+	
 	[Header("Player")]
-	[Tooltip("Sprint speed of the character in m/s")]
+	[Tooltip("Movement speed of the character in m/s")]
 	public float moveSpeed = 6.0f;
 	[Tooltip("Slide time of the character in seconds")] 
 	public float slideTime = 0.6f;
@@ -40,8 +38,8 @@ public class FragPartyController : MonoBehaviour
 	[Tooltip("Boolean to set if the player should currently rotate to face away from the camera")]
 	public bool updateRotation = true;
 	[Tooltip("The speed the character and camera rotate in place")]
-	[Range(0.01f, 100f)]
-	public bool rotationSpeed;
+	[Range(0.01f, 10f)]
+	public float rotationSpeed = 1f;
 	[Tooltip("How fast the character turns to face movement direction")]
 	[Range(0.0f, 0.3f)]
 	public float rotationSmoothTime = 0.12f;
@@ -59,7 +57,7 @@ public class FragPartyController : MonoBehaviour
 	public float jumpTimeout = 0.50f;
 	[Tooltip("Time required to pass before entering the fall state. Useful for walking down stairs")]
 	public float fallTimeout = 0.15f;
-	
+
 	[Space(10)]
 	[Header("Player Grounded")]
 	[Tooltip("If the character is grounded or not. Not part of the CharacterController built in grounded check")]
@@ -85,9 +83,9 @@ public class FragPartyController : MonoBehaviour
 	public float cameraAngleOverride = 0.0f;
 	[Tooltip("For locking the camera position on all axis")]
 	public bool lockCameraPosition = false;
-		
-	#endregion
 	
+	#endregion
+
 	#region PrivateFields
 
 	// cinemachine
@@ -103,11 +101,11 @@ public class FragPartyController : MonoBehaviour
 	private float _verticalVelocity;
 	private float _terminalVelocity = 53.0f;
 
-	// timeout deltatime
+	// timeout delta-time
 	private float _jumpTimeoutDelta;
 	private float _fallTimeoutDelta;
 
-	// locomation timers
+	// locomotion timers
 	private float _slideTime;
 	private float _diveTime;
 	
@@ -127,7 +125,7 @@ public class FragPartyController : MonoBehaviour
 	private bool _hasAnimator;
 	
 	#endregion
-	
+
 	#region ComponentReferences
 
 	private Animator _animator;
@@ -137,7 +135,7 @@ public class FragPartyController : MonoBehaviour
 	[SerializeField] private Transform _grenadeRoot;
 
 	#endregion
-	
+
 	#region UnityFunctions
 
 	private void Awake()
@@ -171,7 +169,7 @@ public class FragPartyController : MonoBehaviour
 	private void Update()
 	{
 		_hasAnimator = TryGetComponent(out _animator);
-
+		
 		JumpAndGravity();
 		GroundedCheck();
 		Slide();
@@ -189,11 +187,11 @@ public class FragPartyController : MonoBehaviour
 	{
 		CameraRotation();
 	}
-
-	#endregion
 	
-	#region StandardFunctions
+	#endregion
 
+	#region StandardFunctions
+	
 	private void AssignAnimationIDs()
 	{
 		_animIDGrounded = Animator.StringToHash("Grounded");
@@ -383,7 +381,7 @@ public class FragPartyController : MonoBehaviour
 	#endregion
 	
 	#region ExpandedFunctions
-
+	
 	private void Slide()
 	{
 		if (grounded && !_animator.GetBool(_animIDSlide))
@@ -560,9 +558,9 @@ public class FragPartyController : MonoBehaviour
 			Debug.Log("Unable to throw grenade.");
 		}
 	}
-	
-	#endregion	
-	
+
+	#endregion
+
 	#region HelperFunctions
 
 	private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
@@ -583,6 +581,6 @@ public class FragPartyController : MonoBehaviour
 		var position = transform.position;
 		Gizmos.DrawSphere(new Vector3(position.x, position.y - groundedOffset, position.z), groundedRadius);
 	}
-		
+	
 	#endregion
 }
