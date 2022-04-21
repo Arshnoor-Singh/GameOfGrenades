@@ -293,9 +293,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HasCooking: 1
-  MaxGrenades: 0
-  Cooldown: 0
-  GrenadeVelocity: 0
+  MaxGrenades: 3
+  Cooldown: 15
+  GrenadeVelocity: 1000
   CookingTime: 3
   DebugDir: {x: 0, y: 0, z: 0}
   Thrown: 0
@@ -311,7 +311,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c1d9da5bc16c1241bb526e274a93258, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ExplosionEffect: {fileID: 0}
+  ExplosionEffect: {fileID: 4283302167381187242, guid: 2f33464ea42102c4597085aa81b3d47d,
+    type: 3}
 --- !u!54 &5142880830104031337
 Rigidbody:
   m_ObjectHideFlags: 0

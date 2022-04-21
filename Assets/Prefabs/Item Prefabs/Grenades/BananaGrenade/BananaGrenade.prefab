@@ -98,11 +98,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HasCooking: 1
-  MaxGrenades: 0
-  Cooldown: 0
+  MaxGrenades: 3
+  Cooldown: 15
   GrenadeVelocity: 100
   CookingTime: 3
   DebugDir: {x: 0, y: 0, z: 1}
+  Thrown: 0
 --- !u!54 &846649217119169406
 Rigidbody:
   m_ObjectHideFlags: 0

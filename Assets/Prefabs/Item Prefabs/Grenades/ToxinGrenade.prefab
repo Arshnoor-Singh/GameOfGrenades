@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 75d7eaecfde2dcf46b4a774e8b82cff0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -116,6 +116,7 @@ MonoBehaviour:
   GrenadeVelocity: 100
   CookingTime: 3
   DebugDir: {x: 0, y: 0, z: 1}
+  Thrown: 0
 --- !u!54 &6955361656498992448
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -146,3 +147,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   toxinEffect: {fileID: 2843779310413003488, guid: 2124a43916792884f810a26533ad4667,
     type: 3}
+  bounces: 2
