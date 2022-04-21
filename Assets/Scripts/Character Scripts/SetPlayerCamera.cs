@@ -40,6 +40,7 @@ public class SetPlayerCamera : MonoBehaviour
         foreach(Transform child in t)
         {
             if(child.gameObject.tag == "MainCamera")
+            // if(child.gameObject.tag == "SplitScreenCamera")
             {
                 int layerTOAdd = LayerMask.NameToLayer(_player[LayerCount]);
                 child.GetComponent<Camera>().cullingMask |= 1 << layerTOAdd;
