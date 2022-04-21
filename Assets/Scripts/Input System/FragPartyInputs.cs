@@ -19,7 +19,11 @@ public class FragPartyInputs : MonoBehaviour
     public bool dive;
     public bool slide;
     public bool toss;
-
+    public bool slot_1;
+    public bool slot_2;
+    public bool slot_3;
+    public bool slot_4;
+    
     [Header("Movement Settings")]
     public bool analogMovement;
 
@@ -62,6 +66,27 @@ public class FragPartyInputs : MonoBehaviour
     {
         TossInput(value.isPressed);
     }
+
+    public void OnSlot_1(InputValue value)
+    {
+        Slot_1Input(value.isPressed);
+    }
+    
+    public void OnSlot_2(InputValue value)
+    {
+        Slot_2Input(value.isPressed);
+    }
+    
+    public void OnSlot_3(InputValue value)
+    {
+        Slot_3Input(value.isPressed);
+    }
+    
+    public void OnSlot_4(InputValue value)
+    {
+        Slot_4Input(value.isPressed);
+    }
+    
 #else
 // old input sys if we do decide to have it (most likely wont)...
 #endif
@@ -96,7 +121,26 @@ public class FragPartyInputs : MonoBehaviour
     {
         toss = newTossState;
     }
+
+    public void Slot_1Input(bool newSlot_1State)
+    {
+        slot_1 = newSlot_1State;
+    }
     
+    public void Slot_2Input(bool newSlot_2State)
+    {
+        slot_2 = newSlot_2State;
+    }
+    
+    public void Slot_3Input(bool newSlot_3State)
+    {
+        slot_3 = newSlot_3State;
+    }
+    
+    public void Slot_4Input(bool newSlot_4State)
+    {
+        slot_4 = newSlot_4State;
+    }
 
 #if !UNITY_IOS || !UNITY_ANDROID
 
