@@ -104,7 +104,9 @@ public class GrenadeInventory : MonoBehaviour
         if (_grenadeInventory[_activeGrenadeSlot].TryThrow())
         {
             GameObject grenade = Instantiate(_grenadeInventory[_activeGrenadeSlot].GetPrefab(), position, rotation);
-            grenade.GetComponent<Grenade_Base>().Launch(direction);
+            Grenade_Base grenadeBase = grenade.GetComponent<Grenade_Base>();
+            grenadeBase.StartCooking();
+            grenadeBase.Launch(direction);
             return true;
         }
         else
