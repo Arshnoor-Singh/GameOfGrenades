@@ -295,7 +295,7 @@ MonoBehaviour:
   HasCooking: 1
   MaxGrenades: 3
   Cooldown: 15
-  GrenadeVelocity: 1000
+  GrenadeVelocity: 20
   CookingTime: 3
   DebugDir: {x: 0, y: 0, z: 0}
   Thrown: 0
