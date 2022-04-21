@@ -16,7 +16,7 @@ public class Grenade_Base : MonoBehaviour
 
 
     Transform grenadeSocket;
-    bool Thrown = false;
+    public bool Thrown = false;
     // Start is called before the first frame update
     void Start()
     {
