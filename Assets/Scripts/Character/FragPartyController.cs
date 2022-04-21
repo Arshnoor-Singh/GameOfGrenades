@@ -5,6 +5,7 @@
 *  Description:        
 */
 
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
@@ -13,13 +14,20 @@ using UnityEngine.InputSystem;
 /* Note: animations are called via the controller for both the character and capsule using animator null checks
 */
 
-
-[RequireComponent(typeof(CharacterController))]
+#region RequiredComponents
+[RequireComponent(typeof(Animator))]
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 [RequireComponent(typeof(PlayerInput))]
+[RequireComponent(typeof(FragPartyInputs))]
 #endif
+[RequireComponent(typeof(GrenadeInventory))]
+[RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(BasicRigidBodyPush))]
+#endregion
 public class FragPartyController : MonoBehaviour
 {
+	#region PublicFields
+	
 	[Header("Player")]
 	[Tooltip("Movement speed of the character in m/s")]
 	public float moveSpeed = 6.0f;
@@ -76,7 +84,10 @@ public class FragPartyController : MonoBehaviour
 	[Tooltip("For locking the camera position on all axis")]
 	public bool lockCameraPosition = false;
 	
-	
+	#endregion
+
+	#region PrivateFields
+
 	// cinemachine
 	private float _cinemachineTargetYaw;
 	private float _cinemachineTargetPitch;
@@ -108,14 +119,24 @@ public class FragPartyController : MonoBehaviour
 	private int _animIDSlide;
 	private int _animIDDive;
 	private int _animIDToss;
-	
-	private Animator _animator;
-	private CharacterController _controller;
-	private FragPartyInputs _input;
 
 	private const float _THRESHOLD = 0.01f;
 
 	private bool _hasAnimator;
+	
+	#endregion
+
+	#region ComponentReferences
+
+	private Animator _animator;
+	private CharacterController _controller;
+	private FragPartyInputs _input;
+	[SerializeField] private GrenadeInventory _inventory;
+	[SerializeField] private Transform _grenadeRoot;
+
+	#endregion
+
+	#region UnityFunctions
 
 	private void Awake()
 	{
@@ -131,6 +152,8 @@ public class FragPartyController : MonoBehaviour
 		_hasAnimator = TryGetComponent(out _animator);
 		_controller = GetComponent<CharacterController>();
 		_input = GetComponent<FragPartyInputs>();
+		_inventory = GetComponent<GrenadeInventory>();
+		_inventory.Init();
 
 		AssignAnimationIDs();
 
@@ -156,13 +179,19 @@ public class FragPartyController : MonoBehaviour
 			Move();
 		}
 		Toss();
+		
+		_inventory.UpdateInventory();
 	}
 
 	private void LateUpdate()
 	{
 		CameraRotation();
 	}
+	
+	#endregion
 
+	#region StandardFunctions
+	
 	private void AssignAnimationIDs()
 	{
 		_animIDGrounded = Animator.StringToHash("Grounded");
@@ -349,6 +378,10 @@ public class FragPartyController : MonoBehaviour
 		}
 	}
 
+	#endregion
+	
+	#region ExpandedFunctions
+	
 	private void Slide()
 	{
 		if (grounded && !_animator.GetBool(_animIDSlide))
@@ -512,13 +545,24 @@ public class FragPartyController : MonoBehaviour
 		}
 	}
 
-	private void ReleaseGrenade()
+	private void TossGrenade()
 	{
 		// release the grenade to be thrown
-		Debug.Log(("Grenade Thrown!"));
-		// Launch()
+		bool grenadeThrown = _inventory.ThrowGrenade(_grenadeRoot.position, _grenadeRoot.rotation, _grenadeRoot.forward);
+		if (grenadeThrown)
+		{
+			Debug.Log(("Grenade Thrown!"));	
+		}
+		else
+		{
+			Debug.Log("Unable to throw grenade.");
+		}
 	}
-		
+
+	#endregion
+
+	#region HelperFunctions
+
 	private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
 	{
 		if (lfAngle < -360f) lfAngle += 360f;
@@ -537,4 +581,6 @@ public class FragPartyController : MonoBehaviour
 		var position = transform.position;
 		Gizmos.DrawSphere(new Vector3(position.x, position.y - groundedOffset, position.z), groundedRadius);
 	}
+	
+	#endregion
 }

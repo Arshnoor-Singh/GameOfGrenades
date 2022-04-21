@@ -15,9 +15,28 @@ public class GrenadeInventory : MonoBehaviour
 {
     public GrenadeListScriptableObject grenadeList;
     
-    [Range(0, 3)] private int _activeGrenadeSlot = 0; // the slot index of the currently selected grenade
-    private GrenadeItem[] _grenadeInventory = new GrenadeItem[4]; // the array of grenade prefabs the player in their inventory
+    [SerializeField, Range(0, 3)] private int _activeGrenadeSlot = 0; // the slot index of the currently selected grenade
+    [SerializeField] private GrenadeItem[] _grenadeInventory = new GrenadeItem[4]; // the array of grenade prefabs the player in their inventory
 
+    // Initialize the grenade systems inventory
+    public void Init()
+    {
+        for(int i = 0; i <= 3; ++i)
+        {
+            _grenadeInventory[i] = new GrenadeItem();
+            _grenadeInventory[i].Init(grenadeList.list[0]);
+        }
+    }
+
+    // Update each grenade item in the inventory
+    public void UpdateInventory()
+    {
+        foreach (var item in _grenadeInventory)
+        {
+            item.UpdateItem();
+        }
+    }
+    
     // change the active inventory slot to the index provided, returns true if changed
     public bool ChangeSlot(int slotID)
     {
@@ -77,6 +96,21 @@ public class GrenadeInventory : MonoBehaviour
     public GameObject RemoveActiveGrenade()
     {
         return RemoveGrenade(_activeGrenadeSlot);
+    }
+
+    // Attempts to throws the actively selected grenade
+    public bool ThrowGrenade(Vector3 position, Quaternion rotation, Vector3 direction)
+    {
+        if (_grenadeInventory[_activeGrenadeSlot].TryThrow())
+        {
+            GameObject grenade = Instantiate(_grenadeInventory[_activeGrenadeSlot].GetPrefab(), position, rotation);
+            grenade.GetComponent<Grenade_Base>().Launch(direction);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }
 
@@ -152,6 +186,21 @@ public class GrenadeItem
         else
         {
             _timer = Cooldown();
+        }
+    }
+
+    // Checks if the actively selected grenade has enough ammo to be thrown and reduces the ammo is there is enough
+    public bool TryThrow()
+    {
+        Debug.Log("Grenade Count: " + _count + ", Grenade Timer: "  +_timer);
+        if (CurrentGrenades() > 0)
+        {
+            --_count;
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 }
