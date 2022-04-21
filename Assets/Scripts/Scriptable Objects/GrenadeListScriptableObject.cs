@@ -1,21 +1,27 @@
+/*
+*  Author:             Ryan Jenkins
+*  Creation Date:      4/19/2022
+*  Last Updated:       4/20/2022
+*  Description:        
+*/
+
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/GrenadeListScriptableObject", order = 1)]
+[CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/GrenadeListScriptableObject", order = 2)]
 public class GrenadeListScriptableObject : ScriptableObject
 {
     public GameObject[] list;
     
-    // Start is called before the first frame update
-    void Start()
+    public GameObject Get(int index)
     {
-        
+        return index >= 0 && index < list.Length ? list[index] : null;
     }
-
-    // Update is called once per frame
-    void Update()
+    
+    public GameObject GetRandom()
     {
-        
+        return Get(Random.Range(0, list.Length));
     }
 }

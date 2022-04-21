@@ -1,5 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1108846446
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1108846447}
+  m_Layer: 8
+  m_Name: GrenadeRoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1108846447
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1108846446}
+  m_LocalRotation: {x: -0.2190472, y: -0, z: -0, w: 0.97571427}
+  m_LocalPosition: {x: 0.387, y: 1.698, z: 0.343}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 3677865195093890071}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: -25.306, y: 0, z: 0}
 --- !u!1 &141005401660680846
 GameObject:
   m_ObjectHideFlags: 0
@@ -879,6 +909,7 @@ GameObject:
   - component: {fileID: 6098394087744054365}
   - component: {fileID: 4053721543856377514}
   - component: {fileID: 4053721543856377505}
+  - component: {fileID: 66174376321970056}
   m_Layer: 8
   m_Name: FP_PlayerArmature
   m_TagString: Player
@@ -900,6 +931,7 @@ Transform:
   - {fileID: 8554496722030409713}
   - {fileID: 7638216906023145669}
   - {fileID: 487647981874784910}
+  - {fileID: 1108846447}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -955,6 +987,7 @@ MonoBehaviour:
   moveSpeed: 6
   slideTime: 1.2
   diveTime: 1.4
+  updateRotation: 1
   rotationSpeed: 0
   rotationSmoothTime: 0.06
   speedChangeRate: 10
@@ -974,6 +1007,8 @@ MonoBehaviour:
   bottomClamp: -30
   cameraAngleOverride: 0
   lockCameraPosition: 0
+  _inventory: {fileID: 0}
+  _grenadeRoot: {fileID: 1108846447}
 --- !u!114 &6098394087744054365
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1006,7 +1041,6 @@ MonoBehaviour:
   move: {x: 0, y: 0}
   look: {x: 0, y: 0}
   jump: 0
-  sprint: 0
   dive: 0
   slide: 0
   toss: 0
@@ -1112,6 +1146,20 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &66174376321970056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4053721543856377517}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d835e88e2450356469b546438a9638ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grenadeList: {fileID: 11400000, guid: 2279dfd5b4f602447b42a93bf0b78aeb, type: 2}
+  _activeGrenadeSlot: 0
 --- !u!1 &4129104010974418046
 GameObject:
   m_ObjectHideFlags: 0
