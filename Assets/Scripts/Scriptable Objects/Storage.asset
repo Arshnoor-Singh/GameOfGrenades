@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aca297f1a10798e4cb358be85c1e58b1, type: 3}
+  m_Name: Storage
+  m_EditorClassIdentifier: 
+  audioSource: {fileID: 0}
+  victory: []
+  defeat: []
+  postMortem: []
+  multiKillStreaks1: Double Kill
+  multiKillStreaksGoal1: 5
+  multiKillStreaksGoalAudio1: []
+  multiKillStreaks2: Triple Kill
+  multiKillStreaksGoal2: 10
+  multiKillStreaksGoalAudio2: []
+  multiKillStreaks3: Cuadruple Kill
+  multiKillStreaksGoal3: 15
+  multiKillStreaksGoalAudio3: []
+  multiKillStreaks4: Quientople Kill
+  multiKillStreaksGoal4: 20
+  multiKillStreaksGoalAudio4: []
+  Milestone1: 5
+  Milestone1Sounds: []
+  Milestone2: 10
+  Milestone2Sounds: []
+  Milestone3: 15
+  Milestone3Sounds: []
+  Milestone4: 20
+  Milestone4Sounds: []
+  Milestone5: 25
+  Milestone5Sounds: []
