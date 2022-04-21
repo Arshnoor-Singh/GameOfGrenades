@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/GrenadeListScriptableObject", order = 1)]
+[CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/GrenadeListScriptableObject", order = 2)]
 public class GrenadeListScriptableObject : ScriptableObject
 {
     public GameObject[] list;
