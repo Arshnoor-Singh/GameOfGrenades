@@ -128,7 +128,7 @@ namespace FragParty
 			// get a reference to our main camera
 			if (playerCamera == null)
 			{
-				playerCamera = GameObject.FindGameObjectWithTag("MainCamera");
+				//playerCamera = GameObject.FindGameObjectWithTag("MainCamera");
 			}
 		}
 
@@ -153,7 +153,9 @@ namespace FragParty
 		{
 			_hasAnimator = TryGetComponent(out _animator);
 			
+
 			JumpAndGravity();
+			
 			GroundedCheck();
 			Slide();
 			Dive();
