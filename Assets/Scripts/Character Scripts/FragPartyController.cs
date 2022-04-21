@@ -131,7 +131,7 @@ public class FragPartyController : MonoBehaviour
 	private Animator _animator;
 	private CharacterController _controller;
 	private FragPartyInputs _input;
-	[SerializeField] private GrenadeInventory _inventory;
+	private GrenadeInventory _inventory;
 	[SerializeField] private Transform _grenadeRoot;
 
 	#endregion
