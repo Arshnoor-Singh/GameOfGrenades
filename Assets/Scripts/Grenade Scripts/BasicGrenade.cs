@@ -24,11 +24,17 @@ public class BasicGrenade : MonoBehaviour
     {
         if(GB.CookingTime <= 0 && CanExplode)
         {
-            Exlode();
+            Explode();
+        }
+
+        //DEBUG
+        if(Input.GetKeyDown(KeyCode.G))
+        {
+            Explode();
         }
     }
 
-    void Exlode()
+    void Explode()
     {
         Debug.Log("BOOOOOOOOOM");
         Instantiate(ExplosionEffect, transform.position, transform.rotation);
@@ -44,7 +50,7 @@ public class BasicGrenade : MonoBehaviour
 
             if(affectedObjects.tag == "Player")
             {
-                
+                //Deal damage
             }
         }
 
