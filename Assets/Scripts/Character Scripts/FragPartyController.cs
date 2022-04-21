@@ -1,29 +1,44 @@
-using System.Runtime.CompilerServices;
-using UnityEditor;
+/*
+*  Author:             Ryan Jenkins, Abhishek Das - based on Unity Start Asset package
+*  Creation Date:      4/19/2022
+*  Last Updated:       4/20/2022
+*  Description:        
+*/
+
+using System;
 using UnityEngine;
-using UnityEngine.Serialization;
-#if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
+#if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 #endif
 
 /* Note: animations are called via the controller for both the character and capsule using animator null checks
 */
 
+#region RequiredComponents
+[RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(CharacterController))]
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 [RequireComponent(typeof(PlayerInput))]
+[RequireComponent(typeof(FragPartyInputs))]
 #endif
+[RequireComponent(typeof(GrenadeInventory))]
+[RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(BasicRigidBodyPush))]
+#endregion
+
 public class FragPartyController : MonoBehaviour
 {
+	#region PublicFields
+
 	[Header("Player")]
-	// [Tooltip("Move speed of the character in m/s")]
-	// public float moveSpeed = 2.0f;
 	[Tooltip("Sprint speed of the character in m/s")]
 	public float moveSpeed = 6.0f;
 	[Tooltip("Slide time of the character in seconds")] 
 	public float slideTime = 0.6f;
 	[Tooltip("Dive time of the character in seconds")]
 	public float diveTime = 0.4f;
+	[Tooltip("Boolean to set if the player should currently rotate to face away from the camera")]
+	public bool updateRotation = true;
 	[Tooltip("The speed the character and camera rotate in place")]
 	[Range(0.01f, 100f)]
 	public bool rotationSpeed;
@@ -44,13 +59,7 @@ public class FragPartyController : MonoBehaviour
 	public float jumpTimeout = 0.50f;
 	[Tooltip("Time required to pass before entering the fall state. Useful for walking down stairs")]
 	public float fallTimeout = 0.15f;
-	// [Tooltip("Time required to pass before being able to slide again. Set to 0f to instantly slide again")]
-	// public float slideTimeout = 0.50f;
-	// [Tooltip("Time required to pass before being able to dive again. Set to 0f to instantly dive again")]
-	// public float diveTimeout = 0.50f;
-	// [Tooltip("Time required to pass before being able to throw again. Set to 0f to instantly throw again")]
-	// public float tossTimeout = 0.50f;
-
+	
 	[Space(10)]
 	[Header("Player Grounded")]
 	[Tooltip("If the character is grounded or not. Not part of the CharacterController built in grounded check")]
@@ -76,16 +85,17 @@ public class FragPartyController : MonoBehaviour
 	public float cameraAngleOverride = 0.0f;
 	[Tooltip("For locking the camera position on all axis")]
 	public bool lockCameraPosition = false;
+		
+	#endregion
 	
-	
+	#region PrivateFields
+
 	// cinemachine
 	private float _cinemachineTargetYaw;
 	private float _cinemachineTargetPitch;
 
 	// player
 	private float _speed;
-	private Vector2 _movementSpeed;
-	private float _animationBlend;
 	private float _animationBlendHorizontal;
 	private float _animationBlendVertical;
 	private float _targetRotation = 0.0f;
@@ -102,7 +112,6 @@ public class FragPartyController : MonoBehaviour
 	private float _diveTime;
 	
 	// animation IDs
-	private int _animIDSpeed;
 	private int _animIDVerticalMovement;
 	private int _animIDHorizontalMovement;
 	private int _animIDGrounded;
@@ -112,14 +121,24 @@ public class FragPartyController : MonoBehaviour
 	private int _animIDSlide;
 	private int _animIDDive;
 	private int _animIDToss;
+
+	private const float _THRESHOLD = 0.01f;
+
+	private bool _hasAnimator;
 	
+	#endregion
+	
+	#region ComponentReferences
+
 	private Animator _animator;
 	private CharacterController _controller;
 	private FragPartyInputs _input;
+	[SerializeField] private GrenadeInventory _inventory;
+	[SerializeField] private Transform _grenadeRoot;
 
-	private const float _threshold = 0.01f;
-
-	private bool _hasAnimator;
+	#endregion
+	
+	#region UnityFunctions
 
 	private void Awake()
 	{
@@ -135,6 +154,8 @@ public class FragPartyController : MonoBehaviour
 		_hasAnimator = TryGetComponent(out _animator);
 		_controller = GetComponent<CharacterController>();
 		_input = GetComponent<FragPartyInputs>();
+		_inventory = GetComponent<GrenadeInventory>();
+		_inventory.Init();
 
 		AssignAnimationIDs();
 
@@ -150,10 +171,8 @@ public class FragPartyController : MonoBehaviour
 	private void Update()
 	{
 		_hasAnimator = TryGetComponent(out _animator);
-		
 
 		JumpAndGravity();
-		
 		GroundedCheck();
 		Slide();
 		Dive();
@@ -162,6 +181,8 @@ public class FragPartyController : MonoBehaviour
 			Move();
 		}
 		Toss();
+		
+		_inventory.UpdateInventory();
 	}
 
 	private void LateUpdate()
@@ -169,9 +190,12 @@ public class FragPartyController : MonoBehaviour
 		CameraRotation();
 	}
 
+	#endregion
+	
+	#region StandardFunctions
+
 	private void AssignAnimationIDs()
 	{
-		_animIDSpeed = Animator.StringToHash("Speed");
 		_animIDGrounded = Animator.StringToHash("Grounded");
 		_animIDJump = Animator.StringToHash("Jump");
 		_animIDFreeFall = Animator.StringToHash("FreeFall");
@@ -200,7 +224,7 @@ public class FragPartyController : MonoBehaviour
 	private void CameraRotation()
 	{
 		// if there is an input and camera position is not fixed
-		if (_input.look.sqrMagnitude >= _threshold && !lockCameraPosition)
+		if (_input.look.sqrMagnitude >= _THRESHOLD && !lockCameraPosition)
 		{
 			_cinemachineTargetYaw += _input.look.x * Time.deltaTime;
 			_cinemachineTargetPitch += _input.look.y * Time.deltaTime;
@@ -216,25 +240,18 @@ public class FragPartyController : MonoBehaviour
 
 	private void Move()
 	{
-		// note: Vector2's != operator uses approximation so is not floating point error prone, and is cheaper than magnitude
 		// if there is a move input rotate player when the player is moving
-		// if (_input.move != Vector2.zero)
-		if (true)
+		if (updateRotation)
 		{
-			// _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + playerCamera.transform.eulerAngles.y;
 			_targetRotation = playerCamera.transform.eulerAngles.y;
 			float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, rotationSmoothTime);
-		
-			// rotate to face input direction relative to camera position
-			transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+			transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f); // rotate to face input direction relative to camera position
 		}
+		
+		float targetSpeed = moveSpeed; // set target speed based on move speed
 
-		// set target speed based on move speed, sprint speed and if sprint is pressed
-		float targetSpeed = moveSpeed;
-
-		// a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
-
-		// note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
+		// a simplistic acceleration and deceleration
+		
 		// if there is no input, set the target speed to 0
 		if (_input.move == Vector2.zero)
 		{
@@ -242,42 +259,38 @@ public class FragPartyController : MonoBehaviour
 		}
 		
 		// a reference to the players current horizontal velocity
-		var velocity = _controller.velocity;
+		var velocity = _controller.velocity; 
 		float currentMovementSpeed = new Vector3(velocity.x, 0.0f, velocity.z).magnitude;
-		var clampedSpeed = new Vector2(
-			Mathf.Clamp(moveSpeed * Mathf.Abs(_input.move.x), 0f, moveSpeed) * Mathf.Sign(_input.move.x),
-			Mathf.Clamp(moveSpeed * Mathf.Abs(_input.move.y), 0f, moveSpeed) * Mathf.Sign(_input.move.y));
 
 		float speedOffset = 0.1f;
 		float inputMagnitude = _input.analogMovement ? _input.move.magnitude : 1f;
 
 		// accelerate or decelerate to target speed
-		if (currentMovementSpeed < targetSpeed - speedOffset ||
-		    currentMovementSpeed > targetSpeed + speedOffset)
+		if (currentMovementSpeed < targetSpeed - speedOffset || currentMovementSpeed > targetSpeed + speedOffset)
 		{
 			// creates curved result rather than a linear one giving a more organic speed change
 			// note T in Lerp is clamped, so we don't need to clamp our speed
 			_speed = Mathf.Lerp(currentMovementSpeed, targetSpeed * inputMagnitude, Time.deltaTime * speedChangeRate);
-			_movementSpeed.x = Mathf.Lerp(velocity.x, clampedSpeed.x, Time.deltaTime * speedChangeRate);
-			_movementSpeed.y = Mathf.Lerp(velocity.y, clampedSpeed.y, Time.deltaTime * speedChangeRate);
+			// _movementSpeed.x = Mathf.Lerp(velocity.x, clampedSpeed.x, Time.deltaTime * speedChangeRate);
+			// _movementSpeed.y = Mathf.Lerp(velocity.y, clampedSpeed.y, Time.deltaTime * speedChangeRate);
 
 			// round speed to 3 decimal places
 			_speed = Mathf.Round(_speed * 1000f) / 1000f;
-			_movementSpeed.x = Mathf.Round(_movementSpeed.x * 1000f) / 1000f;
-			_movementSpeed.y = Mathf.Round(_movementSpeed.y * 1000f) / 1000f;
+			// _movementSpeed.x = Mathf.Round(_movementSpeed.x * 1000f) / 1000f;
+			// _movementSpeed.y = Mathf.Round(_movementSpeed.y * 1000f) / 1000f;
 		}
 		else
 		{
 			_speed = targetSpeed;
-			_movementSpeed = new Vector2(
-				Mathf.Round(clampedSpeed.x * 1000f) / 1000f,
-				Mathf.Round(clampedSpeed.y * 1000f) / 1000f);
+			// _movementSpeed = new Vector2(Mathf.Round(clampedSpeed.x * 1000f) / 1000f, Mathf.Round(clampedSpeed.y * 1000f) / 1000f);
 		}
 		
 		// update the blend state parameter
-		// _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * speedChangeRate);
-		_animationBlendHorizontal = Mathf.Lerp(_animationBlendHorizontal, _movementSpeed.x, Time.deltaTime * speedChangeRate);
-		_animationBlendVertical = Mathf.Lerp(_animationBlendVertical, _movementSpeed.y, Time.deltaTime * speedChangeRate);
+		Vector2 targetDirectionalSpeed = _input.move * targetSpeed;
+		targetDirectionalSpeed.x = Mathf.Round(targetDirectionalSpeed.x * 1000f) / 1000f;
+		targetDirectionalSpeed.y = Mathf.Round(targetDirectionalSpeed.y * 1000f) / 1000f;
+		_animationBlendHorizontal = Mathf.Lerp(_animationBlendHorizontal, targetDirectionalSpeed.x, Time.deltaTime * speedChangeRate);
+		_animationBlendVertical = Mathf.Lerp(_animationBlendVertical, targetDirectionalSpeed.y, Time.deltaTime * speedChangeRate);
 
 		// normalise input direction
 		Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
@@ -286,12 +299,9 @@ public class FragPartyController : MonoBehaviour
 		Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * inputDirection;
 
 		// move the player
-		_controller.Move(targetDirection * (_speed * Time.deltaTime) +
-		                 new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
-		// _controller.Move((new Vector3(_movementSpeed.x, 0.0f, _movementSpeed.y) * Time.deltaTime) + 
-		//                  new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+		_controller.Move(targetDirection * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 
-		// update animator if using character
+		// update animator if using characters
 		if (_hasAnimator)
 		{
 			// _animator.SetFloat(_animIDSpeed, _animationBlend);
@@ -369,6 +379,10 @@ public class FragPartyController : MonoBehaviour
 			_verticalVelocity += gravity * Time.deltaTime;
 		}
 	}
+
+	#endregion
+	
+	#region ExpandedFunctions
 
 	private void Slide()
 	{
@@ -533,12 +547,24 @@ public class FragPartyController : MonoBehaviour
 		}
 	}
 
-	private void ReleaseGrenade()
+	private void TossGrenade()
 	{
 		// release the grenade to be thrown
-		Debug.Log(("Grenade Thrown!"));
+		bool grenadeThrown = _inventory.ThrowGrenade(_grenadeRoot.position, _grenadeRoot.rotation, _grenadeRoot.forward);
+		if (grenadeThrown)
+		{
+			Debug.Log(("Grenade Thrown!"));	
+		}
+		else
+		{
+			Debug.Log("Unable to throw grenade.");
+		}
 	}
-		
+	
+	#endregion	
+	
+	#region HelperFunctions
+
 	private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
 	{
 		if (lfAngle < -360f) lfAngle += 360f;
@@ -551,11 +577,12 @@ public class FragPartyController : MonoBehaviour
 		Color transparentGreen = new Color(0.0f, 1.0f, 0.0f, 0.35f);
 		Color transparentRed = new Color(1.0f, 0.0f, 0.0f, 0.35f);
 
-		if (grounded) Gizmos.color = transparentGreen;
-		else Gizmos.color = transparentRed;
+		Gizmos.color = grounded ? transparentGreen : transparentRed;
 		
 		// when selected, draw a gizmo in the position of, and matching radius of, the grounded collider
 		var position = transform.position;
 		Gizmos.DrawSphere(new Vector3(position.x, position.y - groundedOffset, position.z), groundedRadius);
 	}
+		
+	#endregion
 }
