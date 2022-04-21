@@ -1,12 +1,12 @@
 /*
  * Authors: José Javier Ortiz Vega
  * Date Created:4/20/2022
- * Date Edited: 4/20/2022
+ * Date Edited: 4/21/2022
  * Description: This will allow to store audio files for later use 
  *              Can be modified in the window editor
  *              
  *              ******************************
- *              ****         DONE         ****
+ *              ****          FIX         ****
  *              ******************************
  */
 
@@ -74,10 +74,10 @@ public class AudioStorage : EditorWindow
         Rect rectBox = new Rect(rectPos.x, rectPos.y, Screen.width, Screen.height);
         Rect rectView = new Rect(rectPos.x, rectPos.y, Screen.width, 10000f);
 
-        //editor window
-        editorStuff();
+        //editor window stuff
         GUI.Box(rectBox, GUIContent.none);
         scrollPosition = GUI.BeginScrollView(rectBox, scrollPosition, rectView, false, true);
+        editorStuff(); //editor window
         setMatchSound(); //Match sounds   
         setPostMortem(); //Post mortem sound 
         setEliminations(); //Elimination streak   
@@ -106,6 +106,8 @@ public class AudioStorage : EditorWindow
         guiStyle.normal.textColor = Color.white;
         guiStyle.font = EditorStyles.boldFont;
         GUILayout.Label("Match Sounds", guiStyle);
+
+        //victory = (AudioClip) EditorGUILayout.ObjectField("Label", victory, typeof(AudioClip), false);
     }
     public void setPostMortem()
     {
@@ -143,15 +145,6 @@ public class AudioStorage : EditorWindow
         GUILayout.Label("Multi-Elimination 1 requirements");
         multiStreakRequirement1 = EditorGUILayout.Slider(multiStreakRequirement1, 0, 100);
         GUILayout.EndHorizontal();
-
-        /*
-        AudioClip test = null;//------------------------delete later
-        //Elimination streak 1 sound
-        GUILayout.BeginHorizontal();
-        GUILayout.Label("Multi-Elimination 1 sounds");
-        test = EditorGUILayout.ObjectField(test, typeof(AudioClip), false) as AudioClip;
-        GUILayout.EndHorizontal();
-        */
 
         //Elimination streak 2
         GUILayout.BeginHorizontal();
@@ -207,25 +200,25 @@ public class AudioStorage : EditorWindow
         //Milestone 2 requirement
         GUILayout.BeginHorizontal();
         GUILayout.Label("Milestone 2 Requirement");
-        Milestone1 = (int)EditorGUILayout.Slider(Milestone1, 0, 100);
+        Milestone1 = (int)EditorGUILayout.Slider(Milestone2, 0, 100);
         GUILayout.EndHorizontal();
 
         //Milestone 3 requirement
         GUILayout.BeginHorizontal();
         GUILayout.Label("Milestone 3 Requirement");
-        Milestone1 = (int)EditorGUILayout.Slider(Milestone1, 0, 100);
+        Milestone1 = (int)EditorGUILayout.Slider(Milestone3, 0, 100);
         GUILayout.EndHorizontal();
 
         //Milestone 4 requirement
         GUILayout.BeginHorizontal();
         GUILayout.Label("Milestone 4 Requirement");
-        Milestone1 = (int)EditorGUILayout.Slider(Milestone1, 0, 100);
+        Milestone1 = (int)EditorGUILayout.Slider(Milestone4, 0, 100);
         GUILayout.EndHorizontal();
 
         //Milestone 5 requirement
         GUILayout.BeginHorizontal();
         GUILayout.Label("Milestone 5 Requirement");
-        Milestone1 = (int)EditorGUILayout.Slider(Milestone1, 0, 100);
+        Milestone1 = (int)EditorGUILayout.Slider(Milestone5, 0, 100);
         GUILayout.EndHorizontal();
     }
     public void setProgrammerInformation()
