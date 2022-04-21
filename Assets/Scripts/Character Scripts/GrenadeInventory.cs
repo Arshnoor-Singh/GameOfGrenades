@@ -24,7 +24,7 @@ public class GrenadeInventory : MonoBehaviour
         for(int i = 0; i <= 3; ++i)
         {
             _grenadeInventory[i] = new GrenadeItem();
-            _grenadeInventory[i].Init(grenadeList.list[0]);
+            _grenadeInventory[i].Init(grenadeList.list[i]);
         }
     }
 
