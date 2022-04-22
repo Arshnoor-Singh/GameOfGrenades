@@ -35836,9 +35836,10 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0.56666666
-    functionName: ReleaseGrenade
+    functionName: TossGrenade
     data: 
-    objectReferenceParameter: {fileID: 4053721543856377517, guid: d3d11038eb319d246a0d2df00c5ba4a8, type: 3}
+    objectReferenceParameter: {fileID: 4053721543856377517, guid: d3d11038eb319d246a0d2df00c5ba4a8,
+      type: 3}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
