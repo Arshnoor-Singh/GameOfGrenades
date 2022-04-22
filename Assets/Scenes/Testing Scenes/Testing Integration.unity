@@ -152,12 +152,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81d39052bc5b39f4db201a8ef6c58a1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CentralPivot: {fileID: 8432230013931647782, guid: f1039961e5d5051409ceaea27cc6e712,
+  CentralPivot: {fileID: 919132149155446097, guid: 7e857ab0217f82143a063711d7e6307c,
     type: 3}
   Frame:
-  - {fileID: 1550848623796346785, guid: 895639b95a17d4a49a3eea7e5573e110, type: 3}
-  - {fileID: 1550848623796346785, guid: 376897062c7e1a641ac90dcaa5a35f02, type: 3}
-  - {fileID: 1550848623796346785, guid: 58226bfc79ed5724a9b47c630524db4c, type: 3}
+  - {fileID: 2177095098086225582, guid: 48f3d5eb9521de846a30332dd385289a, type: 3}
+  - {fileID: 2177095098086225582, guid: ed71ccbae7299e64f89197e2f6e27b96, type: 3}
+  - {fileID: 2177095098086225582, guid: 350a0d88205b6b64598d3931c9ea97f8, type: 3}
   FrameDistance: 1
   LevelScale: 1
 --- !u!4 &606912714
