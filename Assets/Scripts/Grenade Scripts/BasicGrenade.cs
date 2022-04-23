@@ -1,3 +1,15 @@
+/*
+ * Authors: Tim José Javier Ortiz Vega
+ * Date Created:4/18/2022
+ * Date Edited: 4/21/2022
+ * Description: This will allow to store grenade info 
+ *              Can be modified in the window editor
+ *              
+ *              ******************************
+ *              ****         DONE         ****
+ *              ******************************
+ */
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,9 +18,9 @@ public class BasicGrenade : MonoBehaviour
 {
     //public GameObject ExplosionTrigger;
     public GameObject ExplosionEffect;
-    public float radious = 5f;
-    public float force = 1000f;
-    public int damage = 0;
+    [Range(0f, 50f)] public float radious = 5f;
+    [Range(0f, 200f)] public float force = 1000f;
+    [Range(0f, 100f)] public int damage = 0;
 
     private Grenade_Base GB;
     private bool CanExplode = true;

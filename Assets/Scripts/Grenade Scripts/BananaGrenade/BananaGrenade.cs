@@ -14,10 +14,12 @@ public class BananaGrenade : MonoBehaviour
     public GameObject ExplosionEffect;
     public float radious = 5f;
     public float force = 1000f;
+    private Grenade_Base GB;
+    private bool CanExplode = true;
     // Start is called before the first frame update
     void Start()
     {
-
+        GB = transform.GetComponent<Grenade_Base>();
     }
 
     // Update is called once per frame
@@ -27,6 +29,11 @@ public class BananaGrenade : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.G))
         {
             //Instantiate(gameObject, transform.position, Quaternion.identity);
+            Explode();
+        }
+
+        if (GB.CookingTime <= 0 && CanExplode)
+        {
             Explode();
         }
     }
@@ -61,6 +68,7 @@ public class BananaGrenade : MonoBehaviour
                 //Deal damage
             }
         }
+        CanExplode = false;
 
         Destroy(gameObject);
 
