@@ -5,7 +5,7 @@
 *  Description:        
 */
 
-using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
@@ -581,6 +581,6 @@ public class FragPartyController : MonoBehaviour
 		var position = transform.position;
 		Gizmos.DrawSphere(new Vector3(position.x, position.y - groundedOffset, position.z), groundedRadius);
 	}
-	
+
 	#endregion
 }
