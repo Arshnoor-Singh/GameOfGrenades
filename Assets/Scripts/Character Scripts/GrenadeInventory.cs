@@ -7,9 +7,9 @@
 */
 
 
-using System.Diagnostics.Contracts;
+using System;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
+using UnityEngine.InputSystem;
 
 public class GrenadeInventory : MonoBehaviour
 {
@@ -17,6 +17,40 @@ public class GrenadeInventory : MonoBehaviour
     
     [SerializeField, Range(0, 3)] private int _activeGrenadeSlot = 0; // the slot index of the currently selected grenade
     [SerializeField] private GrenadeItem[] _grenadeInventory = new GrenadeItem[4]; // the array of grenade prefabs the player in their inventory
+
+    private FragPartyInputs _input;
+
+    private void Start()
+    {
+        _input = GetComponent<FragPartyInputs>();
+    }
+
+    private void Update()
+    {
+        if (_input.slot_1)
+        {
+            ChangeSlot(0);
+            _input.slot_1 = false;
+        }
+
+        if (_input.slot_2)
+        {
+            ChangeSlot(1);
+            _input.slot_2 = false;
+        }
+
+        if (_input.slot_3)
+        {
+            ChangeSlot(2);
+            _input.slot_3 = false;
+        }
+
+        if (_input.slot_4)
+        {
+            ChangeSlot(3);
+            _input.slot_4 = false;
+        }
+    }
 
     // Initialize the grenade systems inventory
     public void Init()

@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 536405069169474060}
   - component: {fileID: 5651574177014585604}
   m_Layer: 0
-  m_Name: GrenadeTest
+  m_Name: BasicGrenade
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -113,9 +113,10 @@ MonoBehaviour:
   HasCooking: 1
   MaxGrenades: 6
   Cooldown: 5
-  GrenadeVelocity: 750
+  GrenadeVelocity: 15
   CookingTime: 3
   DebugDir: {x: 0, y: 0, z: 1}
+  Thrown: 0
 --- !u!54 &536405069169474060
 Rigidbody:
   m_ObjectHideFlags: 0
