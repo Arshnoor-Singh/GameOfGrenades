@@ -384,7 +384,7 @@ public class FragPartyController : MonoBehaviour
 	
 	private void Slide()
 	{
-		if (grounded && !_animator.GetBool(_animIDSlide))
+		if (grounded && ActionReady())
 		{
 			// update animator if using character
 			if (_hasAnimator)
@@ -453,7 +453,7 @@ public class FragPartyController : MonoBehaviour
 
 	private void Dive()
 	{
-		if (grounded && !_animator.GetBool(_animIDDive))
+		if (grounded && ActionReady())
 		{
 			// update animator if using character
 			if (_hasAnimator)
@@ -549,6 +549,7 @@ public class FragPartyController : MonoBehaviour
 	{
 		// release the grenade to be thrown
 		bool grenadeThrown = _inventory.ThrowGrenade(_grenadeRoot.position, _grenadeRoot.rotation, _grenadeRoot.forward);
+		
 		if (grenadeThrown)
 		{
 			Debug.Log(("Grenade Thrown!"));	
@@ -557,6 +558,12 @@ public class FragPartyController : MonoBehaviour
 		{
 			Debug.Log("Unable to throw grenade.");
 		}
+	}
+
+	// Returns true if the player input for jump. slide and dive are all false
+	private bool ActionReady()
+	{
+		return (!_animator.GetBool(_animIDSlide) && !_animator.GetBool(_animIDDive) && !_animator.GetBool(_animIDJump));
 	}
 
 	#endregion
