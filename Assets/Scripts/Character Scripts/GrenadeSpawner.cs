@@ -7,17 +7,17 @@ public class GrenadeSpawner : MonoBehaviour
 {
     [Tooltip("Time in seconds before spawning a new grenade"), Range(1, 120)]
     public float cooldownTimer = 30f;
-    [SerializeField] private float _timer = 0f;
-    [SerializeField] private bool _timerActive;
-    [SerializeField] private bool _grenadeSpawned;
+    private float _timer = 0f;
+    private bool _timerActive;
+    private bool _grenadeSpawned;
 
     [Tooltip("The grenade list containing all game grenades")]
     public GrenadeListScriptableObject grenadeList;
     [Tooltip("The target transform where grenades will be spawned")]
     public Transform spawnTarget;
     
-    [SerializeField] private int _grenadeIndex;
-    [SerializeField] private GameObject _grenadePrefab;
+    private int _grenadeIndex;
+    private GameObject _grenadePrefab;
     
     
     // Start is called before the first frame update
@@ -25,7 +25,7 @@ public class GrenadeSpawner : MonoBehaviour
     {
         _timer = 0f;
         _grenadeSpawned = false;
-        _timerActive = false;
+        _timerActive = true;
     }
 
     // Update is called once per frame
