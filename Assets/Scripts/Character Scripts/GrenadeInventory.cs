@@ -8,6 +8,7 @@
 
 
 using System;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -15,8 +16,8 @@ public class GrenadeInventory : MonoBehaviour
 {
     public GrenadeListScriptableObject grenadeList;
     
-    [SerializeField, Range(0, 3)] private int _activeGrenadeSlot = 0; // the slot index of the currently selected grenade
-    [SerializeField] private GrenadeItem[] _grenadeInventory = new GrenadeItem[4]; // the array of grenade prefabs the player in their inventory
+    [Range(0, 3)] public int activeGrenadeSlot = 0; // the slot index of the currently selected grenade
+    public GrenadeItem[] grenadeInventory = new GrenadeItem[4]; // the array of grenade prefabs the player in their inventory
 
     private FragPartyInputs _input;
 
@@ -27,25 +28,25 @@ public class GrenadeInventory : MonoBehaviour
 
     private void Update()
     {
-        if (_input.slot_1)
+        if (_input.slot_1 && !grenadeInventory[0].empty)
         {
             ChangeSlot(0);
             _input.slot_1 = false;
         }
 
-        if (_input.slot_2)
+        if (_input.slot_2 && !grenadeInventory[1].empty)
         {
             ChangeSlot(1);
             _input.slot_2 = false;
         }
 
-        if (_input.slot_3)
+        if (_input.slot_3 && !grenadeInventory[2].empty)
         {
             ChangeSlot(2);
             _input.slot_3 = false;
         }
 
-        if (_input.slot_4)
+        if (_input.slot_4 && !grenadeInventory[3].empty)
         {
             ChangeSlot(3);
             _input.slot_4 = false;
@@ -55,28 +56,33 @@ public class GrenadeInventory : MonoBehaviour
     // Initialize the grenade systems inventory
     public void Init()
     {
-        for(int i = 0; i <= 3; ++i)
+        // Initialize the first inventory slot with the first grenade in the list
+        grenadeInventory[0] = new GrenadeItem();
+        grenadeInventory[0].Init(grenadeList.list[0]);
+        
+        // Initialize the remaining inventory slots as empty
+        for(int i = 1; i <= 3; ++i)
         {
-            _grenadeInventory[i] = new GrenadeItem();
-            _grenadeInventory[i].Init(grenadeList.list[i]);
+            grenadeInventory[i] = new GrenadeItem();
+            grenadeInventory[i].Clear();
         }
     }
 
     // Update each grenade item in the inventory
     public void UpdateInventory()
     {
-        foreach (var item in _grenadeInventory)
+        foreach (var item in grenadeInventory)
         {
             item.UpdateItem();
         }
     }
     
     // change the active inventory slot to the index provided, returns true if changed
-    public bool ChangeSlot(int slotID)
+    private bool ChangeSlot(int slotID)
     {
-        if (slotID >= 0 && slotID <= 3 && !_grenadeInventory[slotID].empty)
+        if (slotID >= 0 && slotID <= 3 && !grenadeInventory[slotID].empty)
         {
-            _activeGrenadeSlot = slotID;
+            activeGrenadeSlot = slotID;
             return true;
         }
         else
@@ -88,7 +94,7 @@ public class GrenadeInventory : MonoBehaviour
     // Returns the grenade prefab of the active inventory slot
     public GameObject GetGrenade()
     {
-        return _grenadeInventory[_activeGrenadeSlot].GetPrefab();
+        return grenadeInventory[activeGrenadeSlot].GetPrefab();
     }
 
     // Adds a grenade prefab to the inventory in the first available slot or overrides the active slot if full
@@ -97,9 +103,9 @@ public class GrenadeInventory : MonoBehaviour
         bool emptySlotFound = false;
         for (int i = 0; i <= 3; ++i)
         {
-            if (_grenadeInventory[i].empty)
+            if (grenadeInventory[i].empty)
             {
-                _grenadeInventory[i].Init(newGrenade);
+                grenadeInventory[i].Init(newGrenade);
                 emptySlotFound = true;
                 break;
             }
@@ -107,17 +113,17 @@ public class GrenadeInventory : MonoBehaviour
 
         if (!emptySlotFound)
         {
-            _grenadeInventory[_activeGrenadeSlot].Init(newGrenade);
+            grenadeInventory[activeGrenadeSlot].Init(newGrenade);
         }
     }
 
     // Removes the grenade from the inventory slot and returns a prefab reference or null if unable
     public GameObject RemoveGrenade(int slotID)
     {
-        if (slotID >= 0 && slotID <= 3 && !_grenadeInventory[slotID].empty)
+        if (slotID >= 0 && slotID <= 3 && !grenadeInventory[slotID].empty)
         {
-            GameObject removedGrenade = _grenadeInventory[slotID].GetPrefab();
-            _grenadeInventory[slotID].Clear();
+            GameObject removedGrenade = grenadeInventory[slotID].GetPrefab();
+            grenadeInventory[slotID].Clear();
             return removedGrenade;
         }
         else
@@ -129,110 +135,19 @@ public class GrenadeInventory : MonoBehaviour
     // removes the grenade in the active inventory slot
     public GameObject RemoveActiveGrenade()
     {
-        return RemoveGrenade(_activeGrenadeSlot);
+        return RemoveGrenade(activeGrenadeSlot);
     }
 
     // Attempts to throws the actively selected grenade
     public bool ThrowGrenade(Vector3 position, Quaternion rotation, Vector3 direction)
     {
-        if (_grenadeInventory[_activeGrenadeSlot].TryThrow())
+        if (grenadeInventory[activeGrenadeSlot].TryThrow())
         {
-            GameObject grenade = Instantiate(_grenadeInventory[_activeGrenadeSlot].GetPrefab(), position, rotation);
+            GameObject grenade = Instantiate(grenadeInventory[activeGrenadeSlot].GetPrefab(), position, rotation);
             Grenade_Base grenadeBase = grenade.GetComponent<Grenade_Base>();
             grenadeBase.StartCooking();
             grenadeBase.Launch(direction);
             grenadeBase.GrenadeOwner = GetComponent<FragPartyController>().PlayerID;
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-}
-
-public class GrenadeItem
-{
-    private GameObject _prefab;
-    private float _timer;
-    private int _count;
-    public bool empty = true;
-
-    // set the grenade item to the provided grenade type
-    public void Init(GameObject prefab)
-    {
-        _prefab = prefab;
-        _timer = Cooldown();
-        _count = MaxGrenades();
-        empty = false;
-    }
-
-    // clear the grenade item to default values
-    public void Clear()
-    {
-        _prefab = null;
-        _timer = 0f;
-        _count = 0;
-        empty = true;
-    }
-
-    // get the prefab for this grenade type
-    public GameObject GetPrefab()
-    {
-        return _prefab;
-    }
-    
-    // get the cooldown for the grenade type
-    public float Cooldown()
-    {
-        return _prefab.GetComponent<Grenade_Base>().Cooldown;
-    }
-
-    // get the current time remaining for the grenade to replenish 1 ammo
-    public float Timer()
-    {
-        return _timer;
-    }
-    
-    // get the maximum number of grenades for this grenade type
-    public int MaxGrenades()
-    {
-        return _prefab.GetComponent<Grenade_Base>().MaxGrenades;
-    }
-
-    // get the current number of grenades possessed for this grenade type
-    public int CurrentGrenades()
-    {
-        return _count;
-    }
-    
-    // Update the items cooldown time and replenish grenades
-    public void UpdateItem()
-    {
-        // check the count against max
-        if (_count < MaxGrenades())
-        {
-            // increment the cooldown timer
-            _timer -= Time.deltaTime;
-            if (_timer <= 0)
-            {
-                ++_count;
-                _timer = Cooldown();
-            }
-        }
-        else
-        {
-            _timer = Cooldown();
-        }
-    }
-
-    // Checks if the actively selected grenade has enough ammo to be thrown and reduces the ammo is there is enough
-    public bool TryThrow()
-    {
-        Debug.Log("Grenade Count: " + _count + ", Grenade Timer: "  +_timer);
-        if (CurrentGrenades() > 0)
-        {
-            --_count;
             return true;
         }
         else

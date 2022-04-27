@@ -255,7 +255,7 @@ public class FragPartyController : MonoBehaviour
 
 	private void Move()
 	{
-		// if there is a move input rotate player when the player is moving
+		// Rotate player to match the the camera rotation
 		if (updateRotation)
 		{
 			_targetRotation = playerCamera.transform.eulerAngles.y;
@@ -300,26 +300,25 @@ public class FragPartyController : MonoBehaviour
 			// _movementSpeed = new Vector2(Mathf.Round(clampedSpeed.x * 1000f) / 1000f, Mathf.Round(clampedSpeed.y * 1000f) / 1000f);
 		}
 		
-		// update the blend state parameter
+		// update the blend state parameters
 		Vector2 targetDirectionalSpeed = _input.move * targetSpeed;
 		targetDirectionalSpeed.x = Mathf.Round(targetDirectionalSpeed.x * 1000f) / 1000f;
 		targetDirectionalSpeed.y = Mathf.Round(targetDirectionalSpeed.y * 1000f) / 1000f;
 		_animationBlendHorizontal = Mathf.Lerp(_animationBlendHorizontal, targetDirectionalSpeed.x, Time.deltaTime * speedChangeRate);
 		_animationBlendVertical = Mathf.Lerp(_animationBlendVertical, targetDirectionalSpeed.y, Time.deltaTime * speedChangeRate);
 
-		// normalise input direction
+		// normalize the input direction
 		Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
 
-		// Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
+		// rotate the target direction based on the user input
 		Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * inputDirection;
 
-		// move the player
+		// move the player character
 		_controller.Move(targetDirection * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 
 		// update animator if using characters
 		if (_hasAnimator)
 		{
-			// _animator.SetFloat(_animIDSpeed, _animationBlend);
 			_animator.SetFloat(_animIDVerticalMovement, _animationBlendVertical);
 			_animator.SetFloat(_animIDHorizontalMovement, _animationBlendHorizontal);
 			_animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
@@ -401,7 +400,7 @@ public class FragPartyController : MonoBehaviour
 	
 	private void Slide()
 	{
-		if (grounded && !_animator.GetBool(_animIDSlide))
+		if (grounded && ActionReady())
 		{
 			// update animator if using character
 			if (_hasAnimator)
@@ -470,7 +469,7 @@ public class FragPartyController : MonoBehaviour
 
 	private void Dive()
 	{
-		if (grounded && !_animator.GetBool(_animIDDive))
+		if (grounded && ActionReady())
 		{
 			// update animator if using character
 			if (_hasAnimator)
@@ -562,10 +561,12 @@ public class FragPartyController : MonoBehaviour
 		}
 	}
 
+	// Triggers the grenade to be released from the player
 	private void TossGrenade()
 	{
 		// release the grenade to be thrown
 		bool grenadeThrown = _inventory.ThrowGrenade(_grenadeRoot.position, _grenadeRoot.rotation, _grenadeRoot.forward);
+		
 		if (grenadeThrown)
 		{
 			Debug.Log(("Grenade Thrown!"));	
@@ -574,6 +575,12 @@ public class FragPartyController : MonoBehaviour
 		{
 			Debug.Log("Unable to throw grenade.");
 		}
+	}
+
+	// Returns true if the player input for jump. slide and dive are all false
+	private bool ActionReady()
+	{
+		return (!_animator.GetBool(_animIDSlide) && !_animator.GetBool(_animIDDive) && !_animator.GetBool(_animIDJump));
 	}
 
 	#endregion
