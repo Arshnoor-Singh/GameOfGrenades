@@ -64,17 +64,13 @@ public class SettingsMenu : MonoBehaviour
     public void setScreenSize(int sIndex)
     {
         Screen.SetResolution(resolutions[sIndex].width, resolutions[sIndex].height, false);
-<<<<<<< Updated upstream
-        Debug.Log("bbbbbbb");
-=======
-        qualDrop.GetComponent<AudioSource>().Play();
->>>>>>> Stashed changes
+        //qualDrop.GetComponent<AudioSource>().Play();
     }
 
     public void showSettingsMenu()
     {
-        GameObject settingsPanel;
-        GameObject sss;
+        //GameObject settingsPanel;
+        //GameObject sss;
 
     }
 }
