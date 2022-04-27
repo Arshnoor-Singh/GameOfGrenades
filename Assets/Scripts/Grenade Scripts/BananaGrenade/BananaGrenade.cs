@@ -60,12 +60,13 @@ public class BananaGrenade : MonoBehaviour
             Rigidbody rb = affectedObjects.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                rb.AddExplosionForce(force, transform.position, radious);
+                rb.AddExplosionForce(force, transform.position, radious, 5f);
             }
 
             if (affectedObjects.tag == "Player")
             {
-                //Deal damage
+                //Deal damage               
+                affectedObjects.GetComponent<FragPartyCharacter>().Damage(20, GB.GrenadeOwner);
             }
         }
         CanExplode = false;

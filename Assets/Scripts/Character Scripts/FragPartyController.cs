@@ -29,6 +29,8 @@ public class FragPartyController : MonoBehaviour
 	#region PublicFields
 	
 	[Header("Player")]
+	public int PlayerID;
+	public string Team;
 	[Tooltip("Movement speed of the character in m/s")]
 	public float moveSpeed = 6.0f;
 	[Tooltip("Slide time of the character in seconds")] 
@@ -164,6 +166,8 @@ public class FragPartyController : MonoBehaviour
 		// reset our locomotion timers on start
 		_slideTime = slideTime;
 		_diveTime = diveTime;
+
+		TeamAssign();
 	}
 
 	private void Update()
@@ -191,6 +195,19 @@ public class FragPartyController : MonoBehaviour
 	#endregion
 
 	#region StandardFunctions
+
+	private void TeamAssign()
+    {
+		if (PlayerID == 0 || PlayerID == 1)
+		{
+			Team = "Team_A";
+		}
+
+		if (PlayerID == 2 || PlayerID == 3)
+		{
+			Team = "Team_B";
+		}
+	}
 	
 	private void AssignAnimationIDs()
 	{

@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58f2062d0a2869140b855ae505196b40, type: 3}
+  m_Name: AudioStorage
+  m_EditorClassIdentifier: 
+  audioSource: {fileID: 0}
+  victory:
+  - {fileID: 8300000, guid: 76fa08cca36242440969c7c4bcdfd10a, type: 3}
+  - {fileID: 8300000, guid: dc4051ec9c6ce0340b729c6717fd2fad, type: 3}
+  - {fileID: 8300000, guid: 1db7fdee3d738db4182284d9711c7f51, type: 3}
+  defeat:
+  - {fileID: 8300000, guid: 77fc5f63c570823448f72cef00b6ca46, type: 3}
+  - {fileID: 8300000, guid: 1cc11a6f4771b2847948e37c960229e8, type: 3}
+  - {fileID: 8300000, guid: c2d4ee635d264734e999f55ffb764aee, type: 3}
+  postmortemRequirement: 5
+  postMortemSound:
+  - {fileID: 8300000, guid: 334ab2c84de633a48837b756c78e42aa, type: 3}
+  - {fileID: 8300000, guid: 17386703580356940ba2dd4b784b2015, type: 3}
+  - {fileID: 8300000, guid: 817661e3a55547d4586a56f5631439d9, type: 3}
+  - {fileID: 8300000, guid: 390267e0e00b62d41a51f4d168d75de4, type: 3}
+  - {fileID: 8300000, guid: bc753205ae949ee44a2fe5a8e6559106, type: 3}
+  multiElimination1: Double Elimination
+  multiStreakRequirement1: 2
+  multiStreakRequirementTime1: 3
+  multiEliminationSound1:
+  - {fileID: 8300000, guid: 3c0446c12bd37174696eb7549072b635, type: 3}
+  - {fileID: 8300000, guid: 3138345f7147d45478136c8f10c29b3f, type: 3}
+  - {fileID: 8300000, guid: 4b4d026dec093584c9cd1de2f21bd5c7, type: 3}
+  - {fileID: 8300000, guid: fda3a386205054d4080488d9ab43003c, type: 3}
+  multiElimination2: Triple Elimination
+  multiStreakRequirement2: 3
+  multiStreakRequirementTime2: 3
+  multiEliminationSound2:
+  - {fileID: 8300000, guid: dd002448fc454b04ab218adbf6601ea9, type: 3}
+  multiElimination3: Cuadruple Elimination
+  multiStreakRequirement3: 4
+  multiStreakRequirementTime3: 3
+  multiEliminationSound3:
+  - {fileID: 8300000, guid: aec99c609e265e54b95b5f98239733d2, type: 3}
+  multiElimination4: Quientople Elimination
+  multiStreakRequirement4: 5
+  multiStreakRequirementTime4: 3
+  multiEliminationSound4:
+  - {fileID: 8300000, guid: dde28e39d43d9c643b5fe52a7da345c4, type: 3}
+  multiElimination5: Sextople Elimination
+  multiStreakRequirement5: 6
+  multiStreakRequirementTime5: 3
+  multiEliminationSound5:
+  - {fileID: 8300000, guid: bc7e65afa1941694f86dc7e1a2d2cae8, type: 3}
+  Milestone1: 5
+  Milestone1Name: 'Elimination Streak '
+  Milestone1Sounds:
+  - {fileID: 8300000, guid: ce3884dee3accf446bf1f2e28e9dcd00, type: 3}
+  - {fileID: 8300000, guid: fb083c37e2cb18f4cb07f5a817041fb9, type: 3}
+  Milestone2: 10
+  Milestone2Name: Elimination Dominion
+  Milestone2Sounds:
+  - {fileID: 8300000, guid: 6f86ce6ef09b5634e93472fb281e894d, type: 3}
+  - {fileID: 8300000, guid: fc575c929590b954698e366aa8e740fa, type: 3}
+  Milestone3: 15
+  Milestone3Name: Elimination King
+  Milestone3Sounds:
+  - {fileID: 8300000, guid: 3054edfcfa2822547907345060ade788, type: 3}
+  - {fileID: 8300000, guid: f0b40235dd9b07644be5488d84ac31f0, type: 3}
+  Milestone4: 20
+  Milestone4Name: NOTHING HERE
+  Milestone4Sounds: []
+  Milestone5: 25
+  Milestone5Name: NOTHING HERE
+  Milestone5Sounds: []
