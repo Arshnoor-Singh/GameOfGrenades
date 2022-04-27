@@ -10,12 +10,15 @@ public class BananaGrenade : MonoBehaviour
     public float maxRangeX = 5;
     public float maxRangeZ = 5;
     public float distanceToCenter = 1f;
+    public int Damage = 10;
 
     public GameObject ExplosionEffect;
     public float radious = 5f;
     public float force = 1000f;
     private Grenade_Base GB;
     private bool CanExplode = true;
+
+    FragPartyCharacter playerInfo;
     // Start is called before the first frame update
     void Start()
     {
@@ -65,10 +68,14 @@ public class BananaGrenade : MonoBehaviour
 
             if (affectedObjects.tag == "Player")
             {
-                //Deal damage
+                playerInfo = affectedObjects.GetComponent<FragPartyCharacter>();
+
+                playerInfo.Damage(Damage);
             }
         }
         CanExplode = false;
+
+
 
         Destroy(gameObject);
 
