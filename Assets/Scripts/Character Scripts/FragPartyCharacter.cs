@@ -7,43 +7,132 @@
 */
 
 using UnityEngine;
+using System.Collections;
+using Cinemachine;
 
 public class FragPartyCharacter : MonoBehaviour
 {
     [SerializeField] private int _maxHealth = 100;   // The max health for the character, defaults to 100 unless set in inspector
-    private int _currentHealth;     // The current health value of the character
+    [SerializeField] private int _currentHealth;     // The current health value of the character
 
+    public int EnemiesKilled = 0;
+    public int deathCount = 0;
+
+    PlayerSpawnner players;
+    PlayerRespawn SpawnPlayer;
+    CinemachineBrain Cinebrain;
+    CharacterController CharacterControl;
 
     // Start is called before the first frame update
     void Start()
     {
+        Cinebrain = transform.parent.GetComponentInChildren<CinemachineBrain>();
+        players = FindObjectOfType<PlayerSpawnner>();
+        CharacterControl = GetComponent<CharacterController>();
+        SpawnPlayer = GetComponent<PlayerRespawn>();
         _currentHealth = _maxHealth; // Set the characters current health to the max health at the start of play
     }
 
-    // Apply damage to the characters health and check to see if they have been killed
-    public void Damage(int amount)
+    public void HealPlayer(int HealAmount)
     {
-        _currentHealth -= amount; // Reduce the characters health by the amount of damage dealt
+        _currentHealth += HealAmount;
 
-        // Kill the character if their health falls below 0
-        if (_currentHealth < 0)
+        if (_currentHealth > 100)
         {
-            Kill();
+            _currentHealth = 100;
         }
-    
+    }
+
+    // Apply damage to the characters health and check to see if they have been killed
+    public void Damage(int amount, int playerID)
+    {
+        if (players.playerObjects[playerID].GetComponentInChildren<FragPartyController>().Team != transform.GetComponent<FragPartyController>().Team)
+        {
+
+            Debug.Log("Damage dealt " + amount + " by " + playerID);
+
+            _currentHealth -= amount; // Reduce the characters health by the amount of damage dealt
+
+            StartCoroutine(DamageImpact()); // Visual cue for damage taken
+
+            // Kill the character if their health falls below 0
+            if (_currentHealth <= 0)
+            {
+                players.playerObjects[playerID].GetComponentInChildren<FragPartyCharacter>().KillPoint();
+                Kill();
+            }
+
+
+        }
+        else
+        {
+            StartCoroutine(DamageImpact());
+        }
+
+    }
+
+    public void KillPoint()
+    {
+        EnemiesKilled += 1;
     }
 
     // Kill the character and trigger their respawning
-    private void Kill()
+    public void Kill()
     {
-        // Kill the character
-        // Reset the characters stats
-        // Spawn the character at the level spawn location
+        deathCount += 1;
+
+        StartCoroutine(ActivateRagdollAndRespawn()); //This fucntion activates the ragdoll death and then respawns the player
     }
 
     private void ResetStats()
     {
+        _currentHealth = 100;
         // Reset the characters health
         // Reset the characters grenade inventory
     }
+
+    IEnumerator ActivateRagdollAndRespawn()
+    {
+        GetComponent<Animator>().enabled = false;
+        Cinebrain.enabled = false;
+        GetComponent<FragPartyController>().enabled = false;
+        SetRagdollKinematicsAndColliders(true, false);
+
+        yield return new WaitForSeconds(1.5f);
+
+        SetRagdollKinematicsAndColliders(false, true);
+        GetComponent<Animator>().enabled = true;
+        GetComponent<Rigidbody>().isKinematic = false;
+        GetComponent<FragPartyController>().enabled = true;
+        CharacterControl.enabled = true;
+        Cinebrain.enabled = true;
+
+        SpawnPlayer.Respawn(); //Respawns player
+        ResetStats(); //Resets Stats
+    }
+
+    IEnumerator DamageImpact()
+    {
+        yield return new WaitForSeconds(0.1f);
+
+        GetComponent<Rigidbody>().isKinematic = true;
+        GetComponent<Rigidbody>().isKinematic = false;
+    }
+
+    void SetRagdollKinematicsAndColliders(bool ColliderStatus, bool KinematicStatus)
+    {
+        Collider[] colliders = GetComponentsInChildren<Collider>();
+        Rigidbody[] bodies = GetComponentsInChildren<Rigidbody>();
+
+        foreach (Collider collider in colliders)
+        {
+            collider.enabled = ColliderStatus;
+        }
+
+        foreach (Rigidbody rb in bodies)
+        {
+            rb.isKinematic = KinematicStatus;
+        }
+    }
+
 }

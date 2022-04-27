@@ -22,7 +22,7 @@ public class SlowScript : MonoBehaviour
     //give health
     public void healPlayer(int healthToGive)
     {
-        playerInfo.Damage(-healthToGive);
+        playerInfo.HealPlayer(healthToGive);
     }
 
     //slow movement stuff---

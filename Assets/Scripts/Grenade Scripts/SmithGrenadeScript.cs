@@ -5,6 +5,7 @@ using UnityEngine;
 public class SmithGrenadeScript : MonoBehaviour
 {
     public GameObject ExplosionEffect;
+    public int Damage = 50;
     private Vector3 explosionRotation = new Vector3(0, 0, 0);
     private Grenade_Base GB;
     private bool StartAnim = false;
@@ -30,6 +31,7 @@ public class SmithGrenadeScript : MonoBehaviour
         if(other.gameObject.tag == "Player")
         {
             Explode();
+            other.transform.GetComponent<FragPartyCharacter>().Damage(Damage,GB.GrenadeOwner);
         }
     }
 

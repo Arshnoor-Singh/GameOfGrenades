@@ -147,6 +147,7 @@ public class GrenadeInventory : MonoBehaviour
             Grenade_Base grenadeBase = grenade.GetComponent<Grenade_Base>();
             grenadeBase.StartCooking();
             grenadeBase.Launch(direction);
+            grenadeBase.GrenadeOwner = GetComponent<FragPartyController>().PlayerID;
             return true;
         }
         else

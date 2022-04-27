@@ -23,6 +23,7 @@ public class Grenade_Base : MonoBehaviour
 
     //grenade info
     [Header("Grenade Info")]
+    public int GrenadeOwner;
     public string grenadeName = "Grenade name";
     public string grenadeDescription = "Grenade Description";
     public bool isTripMine = false;

@@ -69,8 +69,8 @@ public class SettingsMenu : MonoBehaviour
 
     public void showSettingsMenu()
     {
-        GameObject settingsPanel;
-        GameObject sss;
+        //GameObject settingsPanel;
+        //GameObject sss;
 
     }
 }
