@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5863101190644368388}
   m_Layer: 0
-  m_Name: SplitScreen_NestedPlayerPrefab
+  m_Name: SplitScreen_NestedPlayerPrefabv2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -139,7 +139,7 @@ public class AudioStorageScript : ScriptableObject
     //returns random victory sound
     public AudioClip randomVictoryClip()
     {
-        return victory[Random.Range(0, victory.Count)];
+        return victory[Random.Range(0, victory.Count - 1)];
     }
     //returns specific victory sound
     public AudioClip specificVictoryClip(int clip)
@@ -149,7 +149,7 @@ public class AudioStorageScript : ScriptableObject
     //returns random defeat sound
     public AudioClip randomDefeatClip()
     {
-        return defeat[Random.Range(0, defeat.Count)];
+        return defeat[Random.Range(0, defeat.Count - 1)];
     }
     //returns specific defeat sound
     public AudioClip specificDefeatClip(int clip)

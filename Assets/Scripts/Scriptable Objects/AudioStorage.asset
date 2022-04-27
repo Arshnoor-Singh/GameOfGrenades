@@ -29,7 +29,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 390267e0e00b62d41a51f4d168d75de4, type: 3}
   - {fileID: 8300000, guid: bc753205ae949ee44a2fe5a8e6559106, type: 3}
   multiElimination1: Double Elimination
-  multiStreakRequirement1: 5
+  multiStreakRequirement1: 2
   multiStreakRequirementTime1: 3
   multiEliminationSound1:
   - {fileID: 8300000, guid: 3c0446c12bd37174696eb7549072b635, type: 3}
@@ -37,22 +37,22 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 4b4d026dec093584c9cd1de2f21bd5c7, type: 3}
   - {fileID: 8300000, guid: fda3a386205054d4080488d9ab43003c, type: 3}
   multiElimination2: Triple Elimination
-  multiStreakRequirement2: 10
+  multiStreakRequirement2: 3
   multiStreakRequirementTime2: 3
   multiEliminationSound2:
   - {fileID: 8300000, guid: dd002448fc454b04ab218adbf6601ea9, type: 3}
   multiElimination3: Cuadruple Elimination
-  multiStreakRequirement3: 15
+  multiStreakRequirement3: 4
   multiStreakRequirementTime3: 3
   multiEliminationSound3:
   - {fileID: 8300000, guid: aec99c609e265e54b95b5f98239733d2, type: 3}
   multiElimination4: Quientople Elimination
-  multiStreakRequirement4: 20
+  multiStreakRequirement4: 5
   multiStreakRequirementTime4: 3
   multiEliminationSound4:
   - {fileID: 8300000, guid: dde28e39d43d9c643b5fe52a7da345c4, type: 3}
   multiElimination5: Sextople Elimination
-  multiStreakRequirement5: 30
+  multiStreakRequirement5: 6
   multiStreakRequirementTime5: 3
   multiEliminationSound5:
   - {fileID: 8300000, guid: bc7e65afa1941694f86dc7e1a2d2cae8, type: 3}

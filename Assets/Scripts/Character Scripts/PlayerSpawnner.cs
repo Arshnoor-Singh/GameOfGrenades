@@ -4,22 +4,24 @@ using UnityEngine;
 using Cinemachine;
 using UnityEngine.InputSystem;
 
-public class SetPlayerCamera : MonoBehaviour
+public class PlayerSpawnner : MonoBehaviour
 {
     PlayerInputManager player;
-
+   
     public GameObject PlayerPrefab;
 
+    public GameObject[] spawnPoint;
     public GameObject[] playerObjects;
 
     string[] _player = { "Player 1", "Player 2", "Player 3", "Player 4" };
+    
 
-    int LayerCount = 0;
+    int PlayerCount = 0;
 
     private void Start()
     {
         player = GetComponent<PlayerInputManager>(); 
-        StartCoroutine(setplayerprefab()); // This is to avoid any early instanciation of player
+        StartCoroutine(setplayerprefab()); // This is to avoid any early instantiation of player
     }
 
     IEnumerator setplayerprefab()
@@ -30,9 +32,12 @@ public class SetPlayerCamera : MonoBehaviour
 
     void OnPlayerJoined(PlayerInput player)
     {
+        player.transform.position = spawnPoint[PlayerCount].transform.position; //Spawn players in their target points
+        player.GetComponent<FragPartyController>().PlayerID = PlayerCount;
         playerObjects[player.playerIndex] = player.transform.parent.gameObject;
-        ChangeLayersRecursively(player.transform.parent.transform, _player[LayerCount]);
-        LayerCount++;
+        player.transform.parent.tag = _player[PlayerCount]; //sets player tag
+        ChangeLayersRecursively(player.transform.parent.transform, _player[PlayerCount]); //sets player layer for the camera to follow
+        PlayerCount++;
     }
 
     void ChangeLayersRecursively(Transform t, string s)
@@ -40,9 +45,8 @@ public class SetPlayerCamera : MonoBehaviour
         foreach(Transform child in t)
         {
             if(child.gameObject.tag == "MainCamera")
-            // if(child.gameObject.tag == "SplitScreenCamera")
             {
-                int layerTOAdd = LayerMask.NameToLayer(_player[LayerCount]);
+                int layerTOAdd = LayerMask.NameToLayer(_player[PlayerCount]);
                 child.GetComponent<Camera>().cullingMask |= 1 << layerTOAdd;
             }
 
@@ -55,5 +59,12 @@ public class SetPlayerCamera : MonoBehaviour
             
             ChangeLayersRecursively(child.transform, s);
         }
+    }
+
+    //If players fall off map
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Player")
+            other.gameObject.GetComponent<FragPartyCharacter>().Kill();        
     }
 }
