@@ -64,7 +64,10 @@ public class SettingsMenu : MonoBehaviour
     public void setScreenSize(int sIndex)
     {
         Screen.SetResolution(resolutions[sIndex].width, resolutions[sIndex].height, false);
+<<<<<<< HEAD
         //qualDrop.GetComponent<AudioSource>().Play();
+=======
+>>>>>>> parent of 104fd4f0 (UI 99%)
         Debug.Log("bbbbbbb");
     }
 
