@@ -41,7 +41,7 @@ public class Grenade_Base : MonoBehaviour
     void Start()
     {
         //DEBUG
-        CookingStarted = true;
+        // CookingStarted = true;
     }
 
     // Update is called once per frame
@@ -77,6 +77,7 @@ public class Grenade_Base : MonoBehaviour
     public void Launch (Vector3 dir)
     {
         transform.GetComponent<Rigidbody>().AddForce(dir * GrenadeVelocity, ForceMode.Impulse);
+        CookingStarted = true;
         Thrown = true;
     }
 
