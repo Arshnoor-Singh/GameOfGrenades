@@ -35,30 +35,38 @@ public class AudioStorageScript : ScriptableObject
     [Header("Multi Killstreak Audio")]
     //killstreaks
     public string multiElimination1 = "Double Kill";
-    [SerializeField][Range(0f, 100f)] private float multiStreakRequirement1 = 5;
+    [SerializeField][Range(0f, 100f)] public float multiStreakRequirement1 = 5, multiStreakRequirementTime1 = 3f;
     public List<AudioClip> multiEliminationSound1;
     public string multiElimination2 = "Triple Kill";
-    [SerializeField][Range(0f, 100f)] private float multiStreakRequirement2 = 10;
+    [SerializeField][Range(0f, 100f)] public float multiStreakRequirement2 = 10, multiStreakRequirementTime2 = 3f;
     public List<AudioClip> multiEliminationSound2;
     public string multiElimination3 = "Cuadruple Kill";
-    [SerializeField][Range(0f, 100f)] private float multiStreakRequirement3 = 15;
+    [SerializeField][Range(0f, 100f)] public float multiStreakRequirement3 = 15, multiStreakRequirementTime3 = 3f;
     public List<AudioClip> multiEliminationSound3;
     public string multiElimination4 = "Quientople Kill";
-    [SerializeField][Range(0f, 100f)] private float multiStreakRequirement4 = 20;
+    [SerializeField][Range(0f, 100f)] public float multiStreakRequirement4 = 20, multiStreakRequirementTime4 = 3f;
     public List<AudioClip> multiEliminationSound4;
+    public string multiElimination5 = "Sextople Kill";
+    [SerializeField][Range(0f, 100f)] public float multiStreakRequirement5 = 30, multiStreakRequirementTime5 = 3f;
+    public List<AudioClip> multiEliminationSound5;
 
     string test = "hi";
     [Header("Milestone Audio")]
     //Milestone variables
     [SerializeField][Range(0, 100)] private int Milestone1 = 5;
+    public string Milestone1Name = "";
     public List<AudioClip> Milestone1Sounds;
     [SerializeField][Range(0, 100)] private int Milestone2 = 10;
+    public string Milestone2Name = "";
     public List<AudioClip> Milestone2Sounds;
     [SerializeField][Range(0, 100)] private int Milestone3 = 15;
+    public string Milestone3Name = "";
     public List<AudioClip> Milestone3Sounds;
     [SerializeField][Range(0, 100)] private int Milestone4 = 20;
+    public string Milestone4Name = "";
     public List<AudioClip> Milestone4Sounds;
     [SerializeField][Range(0, 100)] private int Milestone5 = 25;
+    public string Milestone5Name = "";
     public List<AudioClip> Milestone5Sounds;
 
     //return methods-----------------------------------------------------------------------------------
@@ -68,6 +76,21 @@ public class AudioStorageScript : ScriptableObject
     }
 
     //returns library size
+    public float getStreakRequirementTime(int multiEliminationSoundTime)
+    {
+        if (multiEliminationSoundTime == 1)
+            return multiStreakRequirementTime1;
+        else if (multiEliminationSoundTime == 2)
+            return multiStreakRequirementTime2;
+        else if (multiEliminationSoundTime == 3)
+            return multiStreakRequirementTime3;
+        else if (multiEliminationSoundTime == 4)
+            return multiStreakRequirementTime4;
+        else if (multiEliminationSoundTime == 5)
+            return multiStreakRequirementTime5;
+        else
+            return 0;
+    }
     public int getVictorySize()
     {
         return victory.Count;
@@ -90,6 +113,8 @@ public class AudioStorageScript : ScriptableObject
             return multiEliminationSound3.Count;
         else if (elimination == 4)
             return multiEliminationSound4.Count;
+        else if (elimination == 5)
+            return multiEliminationSound5.Count;
         else
             return 0;
     }
@@ -103,6 +128,8 @@ public class AudioStorageScript : ScriptableObject
             return Milestone3Sounds.Count;
         else if (milestone == 4)
             return Milestone4Sounds.Count;
+        else if (milestone ==5)
+            return Milestone5Sounds.Count;
         else
             return 0;
     }
@@ -150,6 +177,8 @@ public class AudioStorageScript : ScriptableObject
             return multiEliminationSound3[Random.Range(0, multiEliminationSound3.Count)];
         else if (elimination == 4)
             return multiEliminationSound4[Random.Range(0, multiEliminationSound4.Count)];
+        else if (elimination == 5)
+            return multiEliminationSound5[Random.Range(0, multiEliminationSound5.Count)];
         else
             return null;
     }
@@ -164,6 +193,8 @@ public class AudioStorageScript : ScriptableObject
             return multiEliminationSound3[(clip - 1)];
         else if (elimination == 4)
             return multiEliminationSound4[(clip - 1)];
+        else if(elimination == 5)
+            return multiEliminationSound5[(clip - 1)];
         else
             return null;
     }
@@ -178,6 +209,8 @@ public class AudioStorageScript : ScriptableObject
             return Milestone3Sounds[Random.Range(0, Milestone3Sounds.Count)];
         else if (milestone == 4)
             return Milestone4Sounds[Random.Range(0, Milestone4Sounds.Count)];
+        else if (milestone == 5)
+            return Milestone5Sounds[Random.Range(0, Milestone5Sounds.Count)];  
         else
             return null;
     }
@@ -192,6 +225,8 @@ public class AudioStorageScript : ScriptableObject
             return Milestone3Sounds[(clip - 1)];
         else if (milestone == 4)
             return Milestone4Sounds[(clip - 1)];
+        else if (milestone == 5)
+            return Milestone5Sounds[(clip - 1)];
         else
             return null;
     }
