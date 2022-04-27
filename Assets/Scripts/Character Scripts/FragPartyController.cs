@@ -605,7 +605,7 @@ public class FragPartyController : MonoBehaviour
 	}
 
 	// Call this function to add an impact force:
-	void AddForce(Vector3 direction, float force)
+	public void AddForce(Vector3 direction, float force)
 	{
 		direction.Normalize();
 		if (direction.y < 0) direction.y = -direction.y; // reflect down force on the ground
