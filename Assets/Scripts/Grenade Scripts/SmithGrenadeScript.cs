@@ -20,7 +20,7 @@ public class SmithGrenadeScript : MonoBehaviour
     {
         if (GB.Thrown && StartAnim == false)
         {
-            anim.SetTrigger("Rotate");
+            // anim.SetTrigger("Rotate");
             StartAnim = false;
         }
     }
