@@ -65,6 +65,7 @@ public class SettingsMenu : MonoBehaviour
     {
         Screen.SetResolution(resolutions[sIndex].width, resolutions[sIndex].height, false);
         //qualDrop.GetComponent<AudioSource>().Play();
+        Debug.Log("bbbbbbb");
     }
 
     public void showSettingsMenu()
