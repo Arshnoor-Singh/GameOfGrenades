@@ -62,7 +62,7 @@ public class BasicGrenade : MonoBehaviour
 
             if(affectedObjects.tag == "Player")
             {
-                affectedObjects.GetComponent<FragPartyCharacter>().Damage(damage);
+                affectedObjects.GetComponent<FragPartyCharacter>().Damage(damage, GB.GrenadeOwner);
             }
         }
 

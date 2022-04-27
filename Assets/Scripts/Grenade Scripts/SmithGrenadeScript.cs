@@ -31,7 +31,7 @@ public class SmithGrenadeScript : MonoBehaviour
         if(other.gameObject.tag == "Player")
         {
             Explode();
-            other.transform.GetComponent<FragPartyCharacter>().Damage(Damage);
+            other.transform.GetComponent<FragPartyCharacter>().Damage(Damage,GB.GrenadeOwner);
         }
     }
 
