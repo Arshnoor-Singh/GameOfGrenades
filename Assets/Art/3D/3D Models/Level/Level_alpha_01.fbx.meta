@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 8930db09cd5cc734885cc697129cce40
+guid: 2252d6bff733ebf439371b0363ec6100
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable: []
@@ -7,13 +7,18 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Gold
-    second: {fileID: 2100000, guid: 934ed37d09449504a8bfa55a424ab70b, type: 2}
+      name: Boundary_Wireframe
+    second: {fileID: 2100000, guid: a94df7846c076ef4699153319404eb23, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Stone
-    second: {fileID: 2100000, guid: 3eb079016c4106b41bc3f19de570f770, type: 2}
+      name: Cover_WireFrame
+    second: {fileID: 2100000, guid: c39db22cd3751d243982134f533425a3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Normal_Wireframe
+    second: {fileID: 2100000, guid: 855eeab19c33bc045a7d4a0066953c98, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

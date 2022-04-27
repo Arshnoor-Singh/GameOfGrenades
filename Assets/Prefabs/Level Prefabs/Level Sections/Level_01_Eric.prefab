@@ -25194,7 +25194,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6052072859889756213}
   m_Layer: 0
-  m_Name: Eric_LevelPrefab
+  m_Name: Level_01_Eric
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
