@@ -133,7 +133,6 @@ public class FragPartyController : MonoBehaviour
 	private FragPartyInputs _input;
 	private GrenadeInventory _inventory;
 	[SerializeField] private Transform _grenadeRoot;
-	[SerializeField] private Transform _aimRoot;
 
 	#endregion
 
@@ -545,6 +544,7 @@ public class FragPartyController : MonoBehaviour
 		}
 	}
 
+	// Triggers the grenade to be released from the player
 	private void TossGrenade()
 	{
 		// release the grenade to be thrown
