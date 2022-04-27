@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1108846447}
+  - component: {fileID: 4630682236401521581}
   m_Layer: 8
   m_Name: GrenadeRoot
   m_TagString: Untagged
@@ -30,6 +31,18 @@ Transform:
   m_Father: {fileID: 3677865195093890071}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: -25.306, y: 0, z: 0}
+--- !u!114 &4630682236401521581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1108846446}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e251ef9225089d74db2f92f98cac9b61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &37369846845718168
 GameObject:
   m_ObjectHideFlags: 0
@@ -942,7 +955,7 @@ Transform:
   m_Children:
   - {fileID: 2252208059130130502}
   m_Father: {fileID: 3677865195093890071}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3508922282700263127
 GameObject:
@@ -1193,9 +1206,9 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 8554496722030409713}
   - {fileID: 7638216906023145669}
   - {fileID: 487647981874784910}
+  - {fileID: 8554496722030409713}
   - {fileID: 1108846447}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -1273,6 +1286,7 @@ MonoBehaviour:
   cameraAngleOverride: 0
   lockCameraPosition: 0
   _grenadeRoot: {fileID: 1108846447}
+  _aimRoot: {fileID: 0}
 --- !u!114 &6098394087744054365
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1893,7 +1907,7 @@ Transform:
   m_Children:
   - {fileID: 5278511676212575137}
   m_Father: {fileID: 3677865195093890071}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6318874731686316117
 GameObject:
@@ -2292,7 +2306,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3677865195093890071}
-  m_RootOrder: 0
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8577626163764917325
 GameObject:
