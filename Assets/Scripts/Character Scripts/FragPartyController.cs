@@ -6,6 +6,7 @@
 */
 
 using System.Collections;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
@@ -26,28 +27,38 @@ using UnityEngine.InputSystem;
 #endregion
 public class FragPartyController : MonoBehaviour
 {
+	// publicly declared variables
 	#region PublicFields
 	
-	[Header("Player")]
-	public int PlayerID;
-	public string Team;
+	[Header("Player Manager")]
+	[Tooltip("The integer ID assigned to the player character at runtime")]
+	[HideInInspector] public int PlayerID;
+	[Tooltip("The team ID string assigned to the player at runtime")]
+	[HideInInspector] public string Team;
+	
+	[Space(10)]
+	[Header("Player Locomotion")]
 	[Tooltip("Movement speed of the character in m/s")]
 	public float moveSpeed = 6.0f;
 	[Tooltip("Slide time of the character in seconds")] 
 	public float slideTime = 0.6f;
 	[Tooltip("Dive time of the character in seconds")]
 	public float diveTime = 0.4f;
+	
+	[Space(10)]
 	[Tooltip("Boolean to set if the player should currently rotate to face away from the camera")]
 	public bool updateRotation = true;
 	[Tooltip("The speed the character and camera rotate in place")]
-	[Range(0.01f, 10f)]
-	public float rotationSpeed = 1f;
+	[Range(0.01f, 10f)] public float rotationSpeed = 1f;
 	[Tooltip("How fast the character turns to face movement direction")]
-	[Range(0.0f, 0.3f)]
-	public float rotationSmoothTime = 0.12f;
+	[Range(0.0f, 0.3f)] public float rotationSmoothTime = 0.12f;
 	[Tooltip("Acceleration and deceleration")]
 	public float speedChangeRate = 10.0f;
 	
+	[Space(10)]
+	[Tooltip("The mass of the player when applying force")]
+	public float mass = 3f;
+
 	[Space(10)]
 	[Tooltip("The height the player can jump")]
 	public float jumpHeight = 1.2f;
@@ -55,6 +66,7 @@ public class FragPartyController : MonoBehaviour
 	public float gravity = -15.0f;
 
 	[Space(10)]
+	[Header("Player Timeouts")]
 	[Tooltip("Time required to pass before being able to jump again. Set to 0f to instantly jump again")]
 	public float jumpTimeout = 0.50f;
 	[Tooltip("Time required to pass before entering the fall state. Useful for walking down stairs")]
@@ -88,20 +100,29 @@ public class FragPartyController : MonoBehaviour
 	
 	#endregion
 
+	// privately declared variables
 	#region PrivateFields
 
 	// cinemachine
 	private float _cinemachineTargetYaw;
 	private float _cinemachineTargetPitch;
 
-	// player
+	// player locomotion
 	private float _speed;
-	private float _animationBlendHorizontal;
-	private float _animationBlendVertical;
 	private float _targetRotation = 0.0f;
 	private float _rotationVelocity;
 	private float _verticalVelocity;
 	private float _terminalVelocity = 53.0f;
+	private bool _lockMovement = false;
+	
+	// animation blending fields
+	private float _animationBlendHorizontal;
+	private float _animationBlendVertical;
+	
+	// pseudo-physics fields
+	private Vector3 _forceVector = Vector3.zero;
+	private Vector3 _appliedForceVector = Vector3.zero;
+	private bool _impacted = false;
 
 	// timeout delta-time
 	private float _jumpTimeoutDelta;
@@ -122,12 +143,15 @@ public class FragPartyController : MonoBehaviour
 	private int _animIDDive;
 	private int _animIDToss;
 
+	// input threshold
 	private const float _THRESHOLD = 0.01f;
 
+	// animator component bool
 	private bool _hasAnimator;
 	
 	#endregion
 
+	// object component reference variables
 	#region ComponentReferences
 
 	private Animator _animator;
@@ -140,44 +164,46 @@ public class FragPartyController : MonoBehaviour
 
 	#region UnityFunctions
 
+	// called when the script is loaded, used to initialize variables before the application starts
 	private void Awake()
 	{
-		// get a reference to our main camera
+		// get a reference to the main camera if a separate reference isn't already provided in the inspector
 		if (playerCamera == null)
 		{
 			playerCamera = GameObject.FindGameObjectWithTag("MainCamera");
 		}
 	}
 
+	// called on the frame when a script is enabled just before any of the Update methods are called the first time.
 	private void Start()
 	{
+		// set component references
 		_hasAnimator = TryGetComponent(out _animator);
 		_controller = GetComponent<CharacterController>();
 		_input = GetComponent<FragPartyInputs>();
 		_inventory = GetComponent<GrenadeInventory>();
-		_inventory.Init();
-
+		
 		AssignAnimationIDs();
 
-		// reset our timeouts on start
+		// reset locomotion timeouts on start
 		_jumpTimeoutDelta = jumpTimeout;
 		_fallTimeoutDelta = fallTimeout;
 		
-		// reset our locomotion timers on start
+		// reset locomotion timers on start
 		_slideTime = slideTime;
 		_diveTime = diveTime;
 
 		TeamAssign();
 	}
 
+	// called once every frame, if the MonoBehaviour is enabled
 	private void Update()
 	{
-		_hasAnimator = TryGetComponent(out _animator);
-		
 		JumpAndGravity();
 		GroundedCheck();
 		Slide();
 		Dive();
+		
 		if (!_animator.GetBool(_animIDSlide) && !_animator.GetBool(_animIDDive))
 		{
 			Move();
@@ -191,7 +217,7 @@ public class FragPartyController : MonoBehaviour
 	{
 		CameraRotation();
 	}
-	
+
 	#endregion
 
 	#region StandardFunctions
@@ -201,11 +227,13 @@ public class FragPartyController : MonoBehaviour
 		if (PlayerID == 0 || PlayerID == 1)
 		{
 			Team = "Team_A";
+			Debug.Log("Team A");
 		}
 
 		if (PlayerID == 2 || PlayerID == 3)
 		{
 			Team = "Team_B";
+			Debug.Log("Team B");
 		}
 	}
 	
@@ -241,7 +269,10 @@ public class FragPartyController : MonoBehaviour
 		// if there is an input and camera position is not fixed
 		if (_input.look.sqrMagnitude >= _THRESHOLD && !lockCameraPosition)
 		{
-			_cinemachineTargetYaw += _input.look.x * Time.deltaTime;
+			if (!_animator.GetBool(_animIDSlide) && !_animator.GetBool(_animIDDive))
+			{
+				_cinemachineTargetYaw += _input.look.x * Time.deltaTime;
+			}
 			_cinemachineTargetPitch += _input.look.y * Time.deltaTime;
 		}
 
@@ -262,66 +293,86 @@ public class FragPartyController : MonoBehaviour
 			float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, rotationSmoothTime);
 			transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f); // rotate to face input direction relative to camera position
 		}
-		
-		float targetSpeed = moveSpeed; // set target speed based on move speed
 
-		// a simplistic acceleration and deceleration
-		
-		// if there is no input, set the target speed to 0
-		if (_input.move == Vector2.zero)
+		if (!_lockMovement && !_impacted)
 		{
-			targetSpeed = 0.0f;
+			
+			float targetSpeed = moveSpeed; // set target speed based on move speed
+
+			// a simplistic acceleration and deceleration
+			
+			// if there is no input, set the target speed to 0
+			if (_input.move == Vector2.zero)
+			{
+				targetSpeed = 0.0f;
+			}
+			
+			// a reference to the players current horizontal velocity
+			var velocity = _controller.velocity; 
+			float currentMovementSpeed = new Vector3(velocity.x, 0.0f, velocity.z).magnitude;
+
+			float speedOffset = 0.1f;
+			float inputMagnitude = _input.analogMovement ? _input.move.magnitude : 1f;
+
+			// accelerate or decelerate to target speed
+			if (currentMovementSpeed < targetSpeed - speedOffset || currentMovementSpeed > targetSpeed + speedOffset)
+			{
+				// creates curved result rather than a linear one giving a more organic speed change
+				// note T in Lerp is clamped, so we don't need to clamp our speed
+				_speed = Mathf.Lerp(currentMovementSpeed, targetSpeed * inputMagnitude, Time.deltaTime * speedChangeRate);
+
+				// round speed to 3 decimal places
+				_speed = Mathf.Round(_speed * 1000f) / 1000f;
+			}
+			else
+			{
+				_speed = targetSpeed;
+			}
+			
+			// update the blend state parameters
+			Vector2 targetDirectionalSpeed = _input.move * targetSpeed;
+			targetDirectionalSpeed.x = Mathf.Round(targetDirectionalSpeed.x * 1000f) / 1000f;
+			targetDirectionalSpeed.y = Mathf.Round(targetDirectionalSpeed.y * 1000f) / 1000f;
+			_animationBlendHorizontal = Mathf.Lerp(_animationBlendHorizontal, targetDirectionalSpeed.x, Time.deltaTime * speedChangeRate);
+			_animationBlendVertical = Mathf.Lerp(_animationBlendVertical, targetDirectionalSpeed.y, Time.deltaTime * speedChangeRate);
+
+			// normalize the input direction
+			Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
+
+			// rotate the target direction based on the user input
+			Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * inputDirection;
+
+			// move the player character
+			_controller.Move(targetDirection * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+
+			// update animator if using characters
+			if (_hasAnimator)
+			{
+				_animator.SetFloat(_animIDVerticalMovement, _animationBlendVertical);
+				_animator.SetFloat(_animIDHorizontalMovement, _animationBlendHorizontal);
+				_animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
+			}
 		}
-		
-		// a reference to the players current horizontal velocity
-		var velocity = _controller.velocity; 
-		float currentMovementSpeed = new Vector3(velocity.x, 0.0f, velocity.z).magnitude;
-
-		float speedOffset = 0.1f;
-		float inputMagnitude = _input.analogMovement ? _input.move.magnitude : 1f;
-
-		// accelerate or decelerate to target speed
-		if (currentMovementSpeed < targetSpeed - speedOffset || currentMovementSpeed > targetSpeed + speedOffset)
+		else  if (_impacted)
 		{
-			// creates curved result rather than a linear one giving a more organic speed change
-			// note T in Lerp is clamped, so we don't need to clamp our speed
-			_speed = Mathf.Lerp(currentMovementSpeed, targetSpeed * inputMagnitude, Time.deltaTime * speedChangeRate);
-			// _movementSpeed.x = Mathf.Lerp(velocity.x, clampedSpeed.x, Time.deltaTime * speedChangeRate);
-			// _movementSpeed.y = Mathf.Lerp(velocity.y, clampedSpeed.y, Time.deltaTime * speedChangeRate);
+			// if sufficient force remains, move the character
+			if (_forceVector.magnitude > 0.2f)
+			{
+				// Move the character according to the added force
+				_controller.Move(_appliedForceVector * Time.deltaTime);
+				
+				// Apply gravity to force vector
+				_appliedForceVector = new Vector3(_forceVector.x, _appliedForceVector.y + gravity * Time.deltaTime, _forceVector.z);
 
-			// round speed to 3 decimal places
-			_speed = Mathf.Round(_speed * 1000f) / 1000f;
-			// _movementSpeed.x = Mathf.Round(_movementSpeed.x * 1000f) / 1000f;
-			// _movementSpeed.y = Mathf.Round(_movementSpeed.y * 1000f) / 1000f;
-		}
-		else
-		{
-			_speed = targetSpeed;
-			// _movementSpeed = new Vector2(Mathf.Round(clampedSpeed.x * 1000f) / 1000f, Mathf.Round(clampedSpeed.y * 1000f) / 1000f);
-		}
-		
-		// update the blend state parameters
-		Vector2 targetDirectionalSpeed = _input.move * targetSpeed;
-		targetDirectionalSpeed.x = Mathf.Round(targetDirectionalSpeed.x * 1000f) / 1000f;
-		targetDirectionalSpeed.y = Mathf.Round(targetDirectionalSpeed.y * 1000f) / 1000f;
-		_animationBlendHorizontal = Mathf.Lerp(_animationBlendHorizontal, targetDirectionalSpeed.x, Time.deltaTime * speedChangeRate);
-		_animationBlendVertical = Mathf.Lerp(_animationBlendVertical, targetDirectionalSpeed.y, Time.deltaTime * speedChangeRate);
-
-		// normalize the input direction
-		Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
-
-		// rotate the target direction based on the user input
-		Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * inputDirection;
-
-		// move the player character
-		_controller.Move(targetDirection * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
-
-		// update animator if using characters
-		if (_hasAnimator)
-		{
-			_animator.SetFloat(_animIDVerticalMovement, _animationBlendVertical);
-			_animator.SetFloat(_animIDHorizontalMovement, _animationBlendHorizontal);
-			_animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
+				// Reduce the added force
+				_forceVector = Vector3.Lerp(_forceVector, Vector3.zero, mass * Time.deltaTime);
+			}
+			else
+			{
+				// Reset the force vector and remove the impacted state
+				_forceVector = Vector3.zero;
+				_impacted = false;
+			}
 		}
 	}
 
@@ -346,7 +397,7 @@ public class FragPartyController : MonoBehaviour
 			}
 
 			// Jump
-			if (_input.jump && _jumpTimeoutDelta <= 0.0f && !_animator.GetBool(_animIDSlide) && !_animator.GetBool(_animIDDive))
+			if (_input.jump && _jumpTimeoutDelta <= 0.0f && !_animator.GetBool(_animIDSlide) && !_animator.GetBool(_animIDDive)  && !_impacted)
 			{
 				// the square root of H * -2 * G = how much velocity needed to reach desired height
 				_verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
@@ -398,8 +449,7 @@ public class FragPartyController : MonoBehaviour
 	
 	#region ExpandedFunctions
 	
-	//I MADE IT PBLIC FOR BANANANADE
-	public void Slide()
+	private void Slide()
 	{
 		if (grounded && ActionReady())
 		{
@@ -421,6 +471,8 @@ public class FragPartyController : MonoBehaviour
                 
                 // set the slide timer
                 _slideTime = slideTime;
+
+                _lockMovement = true;
             }
 		}
 		else if (_animator.GetBool(_animIDSlide) && _slideTime > 0f)
@@ -454,7 +506,6 @@ public class FragPartyController : MonoBehaviour
 			}
 
 			// move the player
-			// _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 			_controller.Move(transform.forward * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 		}
 		else
@@ -468,8 +519,7 @@ public class FragPartyController : MonoBehaviour
 		}
 	}
 
-	// I MADE IT PUBLIC TOO! SCREW YOU!
-	public void Dive()
+	private void Dive()
 	{
 		if (grounded && ActionReady())
 		{
@@ -493,6 +543,8 @@ public class FragPartyController : MonoBehaviour
                 
                 // set the dive timer
                 _diveTime = diveTime;
+
+                _lockMovement = true;
             }
 		}
 		else if (_animator.GetBool(_animIDDive) && _diveTime > 0f)
@@ -542,7 +594,7 @@ public class FragPartyController : MonoBehaviour
 	private void Toss()
 	{
 		// Toss grenade
-		if (!_animator.GetBool(_animIDSlide) && !_animator.GetBool(_animIDDive))
+		if (!_animator.GetBool(_animIDSlide) && !_animator.GetBool(_animIDDive) && !_impacted)
 		{
 			// update animator if using character
 			if (_hasAnimator)
@@ -579,12 +631,38 @@ public class FragPartyController : MonoBehaviour
 		}
 	}
 
-	// Returns true if the player input for jump. slide and dive are all false
+	// Returns true if the player input for jump. slide and dive are all false and the player is not impacted
 	private bool ActionReady()
 	{
-		return (!_animator.GetBool(_animIDSlide) && !_animator.GetBool(_animIDDive) && !_animator.GetBool(_animIDJump));
+		return (!_animator.GetBool(_animIDSlide) && !_animator.GetBool(_animIDDive) && !_animator.GetBool(_animIDJump) && !_impacted);
 	}
 
+	// Call this function to add an impact force:
+	public void AddForce(Vector3 direction, float force)
+	{
+		direction.Normalize();
+		if (grounded && direction.y < 0) direction.y = -direction.y; // reflect down force on the ground
+		_forceVector += direction.normalized * force / mass;
+		_appliedForceVector = _forceVector;
+		_impacted = true;
+	}
+
+	public void ForceSlide()
+	{
+		_input.slide = true;
+	}
+
+	public void ForceDive()
+	{
+		_input.dive = true;
+	}
+
+	// unlock that characters ability to move
+	public void UnlockMovement()
+	{
+		_lockMovement = false;
+	}
+	
 	#endregion
 
 	#region HelperFunctions
