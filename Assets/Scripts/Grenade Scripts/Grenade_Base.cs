@@ -28,9 +28,9 @@ public class Grenade_Base : MonoBehaviour
     public string grenadeDescription = "Grenade Description";
     public bool isTripMine = false;
     public bool HasCooking = true; //this grenade has cooking
-    [Range(1,10)] public int MaxGrenades; //Ammounts of grenades that you can have in the inventory
-    [Range(0,50)] public float Cooldown; //Replenishment for the grenade
-    [Range(0f, 200f)] public float GrenadeVelocity = 0f; //Grenade velocity
+    [Range(1,10)] public int MaxGrenades = 1; //Ammounts of grenades that you can have in the inventory
+    [Range(0,50)] public float Cooldown = 1f; //Replenishment for the grenade
+    [Range(0f, 200f)] public float GrenadeVelocity = 20f; //Grenade velocity
     [Range(0f, 20f)] public float CookingTime = 3f; //cooking time (Trip mines will return 0 in cooking time
 
     //class privates

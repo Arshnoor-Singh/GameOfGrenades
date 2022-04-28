@@ -15,12 +15,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [SelectionBase]
-[RequireComponent(typeof(SphereCollider))]
 public class TheDonutScript : MonoBehaviour
 {
     //private objects
     private FragPartyController playerController;
     private SlowScript slowingScript;
+    private SphereCollider secondCol;
 
     [Header("The donut effects")]
     //effects
@@ -49,18 +49,17 @@ public class TheDonutScript : MonoBehaviour
     {
         _baseScript = transform.GetComponent<Grenade_Base>();
         _audioSource = GetComponent<AudioSource>();
-
-        //              Debug
-        //************************************
-
-        //************************************
-        //          End of Debug
     }
 
     public void Update()
     {
         if (startTimer)
             destroyDonut(false, false, true);
+
+        //              Debug
+        //************************************
+        //************************************
+        //          End of Debug
     }
 
     public void OnCollisionEnter(Collision collision)
@@ -69,7 +68,11 @@ public class TheDonutScript : MonoBehaviour
         {
             slowPlayer();
             destroyDonut(true, false, false);
-            //player.transform.parent = newParent.transform; //-------------------------------------
+        }
+
+        if ((collision.gameObject.tag == "Player") && startTimer)
+        {
+            destroyDonut(false, true, false);
         }
     }
 
@@ -114,7 +117,7 @@ public class TheDonutScript : MonoBehaviour
             _audioSource.Play();
         }
 
-        //destroy on timer
+        //destroy on timer //FIX THIS---------------------------------------------------------
         if (startTimer)
         {
             if (!startTimer)
