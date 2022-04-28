@@ -47,7 +47,9 @@ public class FragPartyController : MonoBehaviour
 	public float rotationSmoothTime = 0.12f;
 	[Tooltip("Acceleration and deceleration")]
 	public float speedChangeRate = 10.0f;
-	
+	[Tooltip("The mass of the player when applying force")]
+	public float mass;
+
 	[Space(10)]
 	[Tooltip("The height the player can jump")]
 	public float jumpHeight = 1.2f;
@@ -102,6 +104,9 @@ public class FragPartyController : MonoBehaviour
 	private float _rotationVelocity;
 	private float _verticalVelocity;
 	private float _terminalVelocity = 53.0f;
+	[SerializeField] private Vector3 _forceVector = Vector3.zero;
+	[SerializeField] private Vector3 _appliedForceVector = Vector3.zero;
+	[SerializeField] private bool _impacted = false;
 
 	// timeout delta-time
 	private float _jumpTimeoutDelta;
@@ -201,11 +206,13 @@ public class FragPartyController : MonoBehaviour
 		if (PlayerID == 0 || PlayerID == 1)
 		{
 			Team = "Team_A";
+			Debug.Log("Team A");
 		}
 
 		if (PlayerID == 2 || PlayerID == 3)
 		{
 			Team = "Team_B";
+			Debug.Log("Team B");
 		}
 	}
 	
@@ -262,66 +269,86 @@ public class FragPartyController : MonoBehaviour
 			float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, rotationSmoothTime);
 			transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f); // rotate to face input direction relative to camera position
 		}
-		
-		float targetSpeed = moveSpeed; // set target speed based on move speed
 
-		// a simplistic acceleration and deceleration
-		
-		// if there is no input, set the target speed to 0
-		if (_input.move == Vector2.zero)
+		if (!_impacted)
 		{
-			targetSpeed = 0.0f;
-		}
-		
-		// a reference to the players current horizontal velocity
-		var velocity = _controller.velocity; 
-		float currentMovementSpeed = new Vector3(velocity.x, 0.0f, velocity.z).magnitude;
+			
+			float targetSpeed = moveSpeed; // set target speed based on move speed
 
-		float speedOffset = 0.1f;
-		float inputMagnitude = _input.analogMovement ? _input.move.magnitude : 1f;
+			// a simplistic acceleration and deceleration
+			
+			// if there is no input, set the target speed to 0
+			if (_input.move == Vector2.zero)
+			{
+				targetSpeed = 0.0f;
+			}
+			
+			// a reference to the players current horizontal velocity
+			var velocity = _controller.velocity; 
+			float currentMovementSpeed = new Vector3(velocity.x, 0.0f, velocity.z).magnitude;
 
-		// accelerate or decelerate to target speed
-		if (currentMovementSpeed < targetSpeed - speedOffset || currentMovementSpeed > targetSpeed + speedOffset)
-		{
-			// creates curved result rather than a linear one giving a more organic speed change
-			// note T in Lerp is clamped, so we don't need to clamp our speed
-			_speed = Mathf.Lerp(currentMovementSpeed, targetSpeed * inputMagnitude, Time.deltaTime * speedChangeRate);
-			// _movementSpeed.x = Mathf.Lerp(velocity.x, clampedSpeed.x, Time.deltaTime * speedChangeRate);
-			// _movementSpeed.y = Mathf.Lerp(velocity.y, clampedSpeed.y, Time.deltaTime * speedChangeRate);
+			float speedOffset = 0.1f;
+			float inputMagnitude = _input.analogMovement ? _input.move.magnitude : 1f;
 
-			// round speed to 3 decimal places
-			_speed = Mathf.Round(_speed * 1000f) / 1000f;
-			// _movementSpeed.x = Mathf.Round(_movementSpeed.x * 1000f) / 1000f;
-			// _movementSpeed.y = Mathf.Round(_movementSpeed.y * 1000f) / 1000f;
+			// accelerate or decelerate to target speed
+			if (currentMovementSpeed < targetSpeed - speedOffset || currentMovementSpeed > targetSpeed + speedOffset)
+			{
+				// creates curved result rather than a linear one giving a more organic speed change
+				// note T in Lerp is clamped, so we don't need to clamp our speed
+				_speed = Mathf.Lerp(currentMovementSpeed, targetSpeed * inputMagnitude, Time.deltaTime * speedChangeRate);
+
+				// round speed to 3 decimal places
+				_speed = Mathf.Round(_speed * 1000f) / 1000f;
+			}
+			else
+			{
+				_speed = targetSpeed;
+			}
+			
+			// update the blend state parameters
+			Vector2 targetDirectionalSpeed = _input.move * targetSpeed;
+			targetDirectionalSpeed.x = Mathf.Round(targetDirectionalSpeed.x * 1000f) / 1000f;
+			targetDirectionalSpeed.y = Mathf.Round(targetDirectionalSpeed.y * 1000f) / 1000f;
+			_animationBlendHorizontal = Mathf.Lerp(_animationBlendHorizontal, targetDirectionalSpeed.x, Time.deltaTime * speedChangeRate);
+			_animationBlendVertical = Mathf.Lerp(_animationBlendVertical, targetDirectionalSpeed.y, Time.deltaTime * speedChangeRate);
+
+			// normalize the input direction
+			Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
+
+			// rotate the target direction based on the user input
+			Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * inputDirection;
+
+			// move the player character
+			_controller.Move(targetDirection * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+
+			// update animator if using characters
+			if (_hasAnimator)
+			{
+				_animator.SetFloat(_animIDVerticalMovement, _animationBlendVertical);
+				_animator.SetFloat(_animIDHorizontalMovement, _animationBlendHorizontal);
+				_animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
+			}
 		}
 		else
 		{
-			_speed = targetSpeed;
-			// _movementSpeed = new Vector2(Mathf.Round(clampedSpeed.x * 1000f) / 1000f, Mathf.Round(clampedSpeed.y * 1000f) / 1000f);
-		}
-		
-		// update the blend state parameters
-		Vector2 targetDirectionalSpeed = _input.move * targetSpeed;
-		targetDirectionalSpeed.x = Mathf.Round(targetDirectionalSpeed.x * 1000f) / 1000f;
-		targetDirectionalSpeed.y = Mathf.Round(targetDirectionalSpeed.y * 1000f) / 1000f;
-		_animationBlendHorizontal = Mathf.Lerp(_animationBlendHorizontal, targetDirectionalSpeed.x, Time.deltaTime * speedChangeRate);
-		_animationBlendVertical = Mathf.Lerp(_animationBlendVertical, targetDirectionalSpeed.y, Time.deltaTime * speedChangeRate);
+			// if sufficient force remains, move the character
+			if (_forceVector.magnitude > 0.2f)
+			{
+				// Move the character according to the added force
+				_controller.Move(_appliedForceVector * Time.deltaTime);
+				
+				// Apply gravity to force vector
+				_appliedForceVector = new Vector3(_forceVector.x, _appliedForceVector.y + gravity * Time.deltaTime, _forceVector.z);
 
-		// normalize the input direction
-		Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
-
-		// rotate the target direction based on the user input
-		Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * inputDirection;
-
-		// move the player character
-		_controller.Move(targetDirection * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
-
-		// update animator if using characters
-		if (_hasAnimator)
-		{
-			_animator.SetFloat(_animIDVerticalMovement, _animationBlendVertical);
-			_animator.SetFloat(_animIDHorizontalMovement, _animationBlendHorizontal);
-			_animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
+				// Reduce the added force
+				_forceVector = Vector3.Lerp(_forceVector, Vector3.zero, mass * Time.deltaTime);
+			}
+			else
+			{
+				// Reset the force vector and remove the impacted state
+				_forceVector = Vector3.zero;
+				_impacted = false;
+			}
 		}
 	}
 
@@ -346,7 +373,7 @@ public class FragPartyController : MonoBehaviour
 			}
 
 			// Jump
-			if (_input.jump && _jumpTimeoutDelta <= 0.0f && !_animator.GetBool(_animIDSlide) && !_animator.GetBool(_animIDDive))
+			if (_input.jump && _jumpTimeoutDelta <= 0.0f && !_animator.GetBool(_animIDSlide) && !_animator.GetBool(_animIDDive)  && !_impacted)
 			{
 				// the square root of H * -2 * G = how much velocity needed to reach desired height
 				_verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
@@ -398,8 +425,7 @@ public class FragPartyController : MonoBehaviour
 	
 	#region ExpandedFunctions
 	
-	//I MADE IT PBLIC FOR BANANANADE
-	public void Slide()
+	private void Slide()
 	{
 		if (grounded && ActionReady())
 		{
@@ -454,7 +480,6 @@ public class FragPartyController : MonoBehaviour
 			}
 
 			// move the player
-			// _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 			_controller.Move(transform.forward * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 		}
 		else
@@ -468,8 +493,7 @@ public class FragPartyController : MonoBehaviour
 		}
 	}
 
-	// I MADE IT PUBLIC TOO! SCREW YOU!
-	public void Dive()
+	private void Dive()
 	{
 		if (grounded && ActionReady())
 		{
@@ -542,7 +566,7 @@ public class FragPartyController : MonoBehaviour
 	private void Toss()
 	{
 		// Toss grenade
-		if (!_animator.GetBool(_animIDSlide) && !_animator.GetBool(_animIDDive))
+		if (!_animator.GetBool(_animIDSlide) && !_animator.GetBool(_animIDDive) && !_impacted)
 		{
 			// update animator if using character
 			if (_hasAnimator)
@@ -579,12 +603,32 @@ public class FragPartyController : MonoBehaviour
 		}
 	}
 
-	// Returns true if the player input for jump. slide and dive are all false
+	// Returns true if the player input for jump. slide and dive are all false and the player is not impacted
 	private bool ActionReady()
 	{
-		return (!_animator.GetBool(_animIDSlide) && !_animator.GetBool(_animIDDive) && !_animator.GetBool(_animIDJump));
+		return (!_animator.GetBool(_animIDSlide) && !_animator.GetBool(_animIDDive) && !_animator.GetBool(_animIDJump) && !_impacted);
 	}
 
+	// Call this function to add an impact force:
+	public void AddForce(Vector3 direction, float force)
+	{
+		direction.Normalize();
+		if (grounded && direction.y < 0) direction.y = -direction.y; // reflect down force on the ground
+		_forceVector += direction.normalized * force / mass;
+		_appliedForceVector = _forceVector;
+		_impacted = true;
+	}
+
+	public void BananaSlide()
+	{
+		_input.slide = true;
+	}
+
+	public void SmithDive()
+	{
+		_input.dive = true;
+	}
+	
 	#endregion
 
 	#region HelperFunctions

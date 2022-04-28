@@ -43,6 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e251ef9225089d74db2f92f98cac9b61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lookTarget: {fileID: 0}
 --- !u!1 &37369846845718168
 GameObject:
   m_ObjectHideFlags: 0
@@ -1188,6 +1189,7 @@ GameObject:
   - component: {fileID: 4053721543856377514}
   - component: {fileID: 4053721543856377505}
   - component: {fileID: 66174376321970056}
+  - component: {fileID: 4704903733736712608}
   m_Layer: 8
   m_Name: FP_PlayerArmature
   m_TagString: Player
@@ -1262,6 +1264,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33f092d6d09d25f4bb08b1fef87c30a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PlayerID: 0
+  Team: 
   moveSpeed: 6
   slideTime: 1.2
   diveTime: 1.4
@@ -1269,6 +1273,7 @@ MonoBehaviour:
   rotationSpeed: 0
   rotationSmoothTime: 0.06
   speedChangeRate: 10
+  mass: 0
   jumpHeight: 2
   gravity: -15
   jumpTimeout: 0.5
@@ -1285,8 +1290,10 @@ MonoBehaviour:
   bottomClamp: -30
   cameraAngleOverride: 0
   lockCameraPosition: 0
+  _forceVector: {x: 0, y: 0, z: 0}
+  _appliedForceVector: {x: 0, y: 0, z: 0}
+  _impacted: 0
   _grenadeRoot: {fileID: 1108846447}
-  _aimRoot: {fileID: 0}
 --- !u!114 &6098394087744054365
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1441,7 +1448,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grenadeList: {fileID: 11400000, guid: 2279dfd5b4f602447b42a93bf0b78aeb, type: 2}
-  _activeGrenadeSlot: 0
+  activeGrenadeSlot: 0
+--- !u!114 &4704903733736712608
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4053721543856377517}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4958571cff47c0e458b0a2b62e06cdbc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxHealth: 100
+  _currentHealth: 0
+  EnemiesKilled: 0
+  deathCount: 0
 --- !u!1 &4059488728974311031
 GameObject:
   m_ObjectHideFlags: 0
