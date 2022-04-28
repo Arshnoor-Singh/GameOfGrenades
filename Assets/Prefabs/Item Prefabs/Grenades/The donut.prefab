@@ -3254,8 +3254,9 @@ GameObject:
   - component: {fileID: -6298067993143439769}
   - component: {fileID: 6291872724765791825}
   - component: {fileID: -4024172033132074564}
+  - component: {fileID: -5039984067470994660}
   m_Layer: 0
-  m_Name: The Donut
+  m_Name: The donut
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3440,10 +3441,22 @@ MonoBehaviour:
   _CollectOrExplodeEffect: {fileID: 0}
   _collisionSound: {fileID: 8300000, guid: 8cb4eef7cc255f34ca2c2f1855006b6e, type: 3}
   _explosionSound: {fileID: 8300000, guid: 5f235d7a9d32d8e46a45ea2d5e60e951, type: 3}
-  _collectionSound: {fileID: 8300000, guid: 0d8683c50d5e7a24bb98985e11d04416, type: 3}
+  _collectionSound: {fileID: 8300000, guid: e3588acd072f48441997d4cdf2b17fd7, type: 3}
   slowAmount: 0.4
   slowTime: 5
   healthToRestore: 20
+--- !u!114 &-5039984067470994660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2875767242333315133}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca82f569f63591b4083fcaf7187f67ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2914576333179322129
 GameObject:
   m_ObjectHideFlags: 0

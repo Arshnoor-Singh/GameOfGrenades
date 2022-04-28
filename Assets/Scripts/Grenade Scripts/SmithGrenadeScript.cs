@@ -10,9 +10,15 @@ public class SmithGrenadeScript : MonoBehaviour
     private Grenade_Base GB;
     private bool StartAnim = false;
     private Animator anim;
+
+    //sounds
+    private AudioSource grenadeAudioSource;
+    public AudioClip grenadeAudioClip;
+
     // Start is called before the first frame update
     void Start()
     {
+        grenadeAudioSource.GetComponent<AudioSource>().clip = grenadeAudioClip;
         GB = GetComponent<Grenade_Base>();
     }
 
@@ -31,6 +37,7 @@ public class SmithGrenadeScript : MonoBehaviour
         if(other.gameObject.tag == "Player")
         {
             Explode();
+            grenadeAudioSource.Play();
             other.transform.GetComponent<FragPartyCharacter>().Damage(Damage,GB.GrenadeOwner);
             other.transform.GetComponent<FragPartyController>().ForceDive();
         }

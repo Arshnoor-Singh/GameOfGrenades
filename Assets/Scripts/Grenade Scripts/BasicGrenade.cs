@@ -25,9 +25,15 @@ public class BasicGrenade : MonoBehaviour
     private Grenade_Base GB;
     private bool CanExplode = true;
     private CharacterController CC;
+
+    //sounds
+    private AudioSource grenadeAudioSource;
+    public AudioClip grenadeAudioClip;
+
     // Start is called before the first frame update
     void Start()
     {
+        grenadeAudioSource.GetComponent<AudioSource>().clip = grenadeAudioClip;
         GB = transform.GetComponent<Grenade_Base>();
     }
 
@@ -48,6 +54,8 @@ public class BasicGrenade : MonoBehaviour
 
     void Explode()
     {
+        grenadeAudioSource.Play();
+
         Debug.Log("BOOOOOOOOOM");
         Instantiate(ExplosionEffect, transform.position, transform.rotation);
 
