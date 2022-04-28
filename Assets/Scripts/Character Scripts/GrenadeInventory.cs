@@ -24,6 +24,7 @@ public class GrenadeInventory : MonoBehaviour
     private void Start()
     {
         _input = GetComponent<FragPartyInputs>();
+        Init();
     }
 
     private void Update()
