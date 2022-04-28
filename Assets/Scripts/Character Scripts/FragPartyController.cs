@@ -104,8 +104,9 @@ public class FragPartyController : MonoBehaviour
 	private float _rotationVelocity;
 	private float _verticalVelocity;
 	private float _terminalVelocity = 53.0f;
-	private Vector3 _forceVector =Vector3.zero;
-	private bool _impacted = false;
+	[SerializeField] private Vector3 _forceVector = Vector3.zero;
+	[SerializeField] private Vector3 _appliedForceVector = Vector3.zero;
+	[SerializeField] private bool _impacted = false;
 
 	// timeout delta-time
 	private float _jumpTimeoutDelta;
@@ -332,10 +333,13 @@ public class FragPartyController : MonoBehaviour
 			if (_forceVector.magnitude > 0.2f)
 			{
 				// Move the character according to the added force
-				_controller.Move(_forceVector * Time.deltaTime);
+				_controller.Move(_appliedForceVector * Time.deltaTime);
 				
+				// Apply gravity to force vector
+				_appliedForceVector = new Vector3(_forceVector.x, _appliedForceVector.y + gravity * Time.deltaTime, _forceVector.z);
+
 				// Reduce the added force
-				_forceVector = Vector3.Lerp(_forceVector, Vector3.zero, 5 * Time.deltaTime);
+				_forceVector = Vector3.Lerp(_forceVector, Vector3.zero, mass * Time.deltaTime);
 			}
 			else
 			{
@@ -348,7 +352,7 @@ public class FragPartyController : MonoBehaviour
 
 	private void JumpAndGravity()
 	{
-		if (grounded && !_impacted)
+		if (grounded)
 		{
 			// reset the fall timeout timer
 			_fallTimeoutDelta = fallTimeout;
@@ -367,7 +371,7 @@ public class FragPartyController : MonoBehaviour
 			}
 
 			// Jump
-			if (_input.jump && _jumpTimeoutDelta <= 0.0f && !_animator.GetBool(_animIDSlide) && !_animator.GetBool(_animIDDive))
+			if (_input.jump && _jumpTimeoutDelta <= 0.0f && !_animator.GetBool(_animIDSlide) && !_animator.GetBool(_animIDDive)  && !_impacted)
 			{
 				// the square root of H * -2 * G = how much velocity needed to reach desired height
 				_verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
@@ -474,7 +478,6 @@ public class FragPartyController : MonoBehaviour
 			}
 
 			// move the player
-			// _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 			_controller.Move(transform.forward * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 		}
 		else
@@ -608,8 +611,10 @@ public class FragPartyController : MonoBehaviour
 	public void AddForce(Vector3 direction, float force)
 	{
 		direction.Normalize();
-		if (direction.y < 0) direction.y = -direction.y; // reflect down force on the ground
+		if (grounded && direction.y < 0) direction.y = -direction.y; // reflect down force on the ground
 		_forceVector += direction.normalized * force / mass;
+		_appliedForceVector = _forceVector;
+		_impacted = true;
 	}
 	
 	#endregion
