@@ -59,6 +59,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   duration: 10
+  DamageCD: 3
 --- !u!1001 &2843779310544419768
 PrefabInstance:
   m_ObjectHideFlags: 0
