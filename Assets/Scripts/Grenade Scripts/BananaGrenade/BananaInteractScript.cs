@@ -9,7 +9,7 @@ public class BananaInteractScript : MonoBehaviour
         if(other.gameObject.tag == "Player")
         {
             //Affest the player
-            other.GetComponent<FragPartyController>().BananaSlide();
+            other.GetComponent<FragPartyController>().Slide();
         }
     }
 }
