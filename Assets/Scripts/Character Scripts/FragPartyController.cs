@@ -423,8 +423,7 @@ public class FragPartyController : MonoBehaviour
 	
 	#region ExpandedFunctions
 	
-	//I MADE IT PBLIC FOR BANANANADE
-	public void Slide()
+	private void Slide()
 	{
 		if (grounded && ActionReady())
 		{
@@ -492,8 +491,7 @@ public class FragPartyController : MonoBehaviour
 		}
 	}
 
-	// I MADE IT PUBLIC TOO! SCREW YOU!
-	public void Dive()
+	private void Dive()
 	{
 		if (grounded && ActionReady())
 		{
@@ -617,6 +615,16 @@ public class FragPartyController : MonoBehaviour
 		_forceVector += direction.normalized * force / mass;
 		_appliedForceVector = _forceVector;
 		_impacted = true;
+	}
+
+	public void BananaSlide()
+	{
+		_input.slide = true;
+	}
+
+	public void SmithDive()
+	{
+		_input.dive = true;
 	}
 	
 	#endregion
