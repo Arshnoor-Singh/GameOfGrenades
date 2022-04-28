@@ -398,7 +398,8 @@ public class FragPartyController : MonoBehaviour
 	
 	#region ExpandedFunctions
 	
-	private void Slide()
+	//I MADE IT PBLIC FOR BANANANADE
+	public void Slide()
 	{
 		if (grounded && ActionReady())
 		{
@@ -467,7 +468,8 @@ public class FragPartyController : MonoBehaviour
 		}
 	}
 
-	private void Dive()
+	// I MADE IT PUBLIC TOO! SCREW YOU!
+	public void Dive()
 	{
 		if (grounded && ActionReady())
 		{

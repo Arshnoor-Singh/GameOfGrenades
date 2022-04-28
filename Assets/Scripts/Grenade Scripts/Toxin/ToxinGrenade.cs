@@ -40,7 +40,8 @@ public class ToxinGrenade : MonoBehaviour
 
     void Explode()
     {
-        Instantiate(toxinEffect, transform.position, Quaternion.Euler(spawnDir));
+        GameObject SpawnedTrigger = Instantiate(toxinEffect, transform.position, Quaternion.Euler(spawnDir));
+        SpawnedTrigger.GetComponent<ToxinTrigger>().playerID = GB.GrenadeOwner;
         GameObject.Destroy(gameObject);
         CanExplode = false;
     }
