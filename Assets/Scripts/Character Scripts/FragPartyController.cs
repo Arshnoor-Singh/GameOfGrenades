@@ -206,11 +206,13 @@ public class FragPartyController : MonoBehaviour
 		if (PlayerID == 0 || PlayerID == 1)
 		{
 			Team = "Team_A";
+			Debug.Log("Team A");
 		}
 
 		if (PlayerID == 2 || PlayerID == 3)
 		{
 			Team = "Team_B";
+			Debug.Log("Team B");
 		}
 	}
 	
