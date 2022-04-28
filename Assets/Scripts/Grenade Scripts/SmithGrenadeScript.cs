@@ -32,7 +32,7 @@ public class SmithGrenadeScript : MonoBehaviour
         {
             Explode();
             other.transform.GetComponent<FragPartyCharacter>().Damage(Damage,GB.GrenadeOwner);
-            other.transform.GetComponent<FragPartyController>().SmithDive();
+            other.transform.GetComponent<FragPartyController>().Dive();
         }
     }
 
