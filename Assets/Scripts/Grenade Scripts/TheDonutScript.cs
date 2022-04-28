@@ -20,7 +20,6 @@ public class TheDonutScript : MonoBehaviour
     //private objects
     private FragPartyController playerController;
     private SlowScript slowingScript;
-    private SphereCollider secondCol;
 
     [Header("The donut effects")]
     //effects

@@ -10,9 +10,14 @@ public class ToxinGrenade : MonoBehaviour
     private Grenade_Base GB;
     private bool CanExplode = true;
 
+    //sounds
+    private AudioSource grenadeAudioSource;
+    public AudioClip grenadeAudioClip;
+
     // Start is called before the first frame update
     void Start()
     {
+        grenadeAudioSource = GetComponent<AudioSource>();
         GB = transform.GetComponent<Grenade_Base>();
     }
 
@@ -44,5 +49,7 @@ public class ToxinGrenade : MonoBehaviour
         SpawnedTrigger.GetComponent<ToxinTrigger>().playerID = GB.GrenadeOwner;
         GameObject.Destroy(gameObject);
         CanExplode = false;
+        grenadeAudioSource.clip = grenadeAudioClip;
+        grenadeAudioSource.Play();
     }
 }
