@@ -9,19 +9,26 @@
 using UnityEngine;
 using System.Collections;
 using Cinemachine;
+using UnityEngine.UI;
 
 public class FragPartyCharacter : MonoBehaviour
 {
     [SerializeField] private int _maxHealth = 100;   // The max health for the character, defaults to 100 unless set in inspector
-    [SerializeField] private int _currentHealth;     // The current health value of the character
+    [SerializeField] public int _currentHealth;     // The current health value of the character
 
     public int EnemiesKilled = 0;
     public int deathCount = 0;
+    public Text playerId;
+
+    public AudioStorageScript AudioScript;
+    public AudioSource Audio;
 
     PlayerSpawnner players;
     PlayerRespawn SpawnPlayer;
     CinemachineBrain Cinebrain;
     CharacterController CharacterControl;
+    GameUI Health;
+    ScoreBoard PlayerManager; 
 
     // Start is called before the first frame update
     void Start()
@@ -31,6 +38,11 @@ public class FragPartyCharacter : MonoBehaviour
         CharacterControl = GetComponent<CharacterController>();
         SpawnPlayer = GetComponent<PlayerRespawn>();
         _currentHealth = _maxHealth; // Set the characters current health to the max health at the start of play
+        Health = transform.parent.GetComponentInChildren<GameUI>();
+        Health.changeLifeBar(_currentHealth);
+        playerId.text = "P" + GetComponent<FragPartyController>().PlayerID;
+        //PlayerManager = transform.parent.GetComponent<Player>();
+        Audio = players.GetComponent<AudioSource>();
     }
 
     public void HealPlayer(int HealAmount)
@@ -52,6 +64,8 @@ public class FragPartyCharacter : MonoBehaviour
             Debug.Log("Damage dealt " + amount + " by " + playerID);
 
             _currentHealth -= amount; // Reduce the characters health by the amount of damage dealt
+
+            Health.currentLife = _currentHealth;
 
             StartCoroutine(DamageImpact()); // Visual cue for damage taken
 
@@ -80,13 +94,22 @@ public class FragPartyCharacter : MonoBehaviour
     public void Kill()
     {
         deathCount += 1;
-
+        PlayKillAudio();
         StartCoroutine(ActivateRagdollAndRespawn()); //This fucntion activates the ragdoll death and then respawns the player
+    }
+
+    void PlayKillAudio()
+    {
+
+        Audio.clip = AudioScript.randomMilestoneClip(Random.Range(1, 5));
+
+        Audio.Play();
     }
 
     private void ResetStats()
     {
         _currentHealth = 100;
+        Health.currentLife = _currentHealth;
         // Reset the characters health
         // Reset the characters grenade inventory
     }

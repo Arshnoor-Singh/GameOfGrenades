@@ -12,8 +12,10 @@ public class ScoreBoard : MonoBehaviour
     private string Player_3_Deaths;
     private string Player_4_Deaths;
 
-    [SerializeField] public int Team_A_Score;
-    [SerializeField] public int Team_B_Score;
+    [SerializeField] public int Team_A_Score = 0;
+    [SerializeField] public int Team_B_Score = 0;
+    [SerializeField] public int VictoryTarget = 15;
+
 
     PlayerSpawnner players;
 
@@ -45,7 +47,7 @@ public class ScoreBoard : MonoBehaviour
         if (players.playerObjects[0] != null && players.playerObjects[1] != null)
             Team_B_Score = (players.playerObjects[0].GetComponentInChildren<FragPartyCharacter>().deathCount + players.playerObjects[1].GetComponentInChildren<FragPartyCharacter>().deathCount);
 
-        if(Team_A_Score == 1 || Team_B_Score == 1)
+        if(Team_A_Score == VictoryTarget || Team_B_Score == VictoryTarget)
         {
             PlayVictoryAudio();
         }

@@ -202,15 +202,15 @@ public class AudioStorageScript : ScriptableObject
     public AudioClip randomMilestoneClip(int milestone)
     {
         if (milestone == 1)
-            return Milestone1Sounds[Random.Range(0, Milestone1Sounds.Count)];
+            return Milestone1Sounds[Random.Range(0, Milestone1Sounds.Count - 1)];
         else if (milestone == 2)
-            return Milestone2Sounds[Random.Range(0, Milestone2Sounds.Count)];
+            return Milestone2Sounds[Random.Range(0, Milestone2Sounds.Count -1)];
         else if (milestone == 3)
-            return Milestone3Sounds[Random.Range(0, Milestone3Sounds.Count)];
+            return Milestone3Sounds[Random.Range(0, Milestone3Sounds.Count - 1)];
         else if (milestone == 4)
-            return Milestone4Sounds[Random.Range(0, Milestone4Sounds.Count)];
+            return Milestone4Sounds[Random.Range(0, Milestone4Sounds.Count - 1)];
         else if (milestone == 5)
-            return Milestone5Sounds[Random.Range(0, Milestone5Sounds.Count)];  
+            return Milestone5Sounds[Random.Range(0, Milestone5Sounds.Count - 1)];  
         else
             return null;
     }

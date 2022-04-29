@@ -6,12 +6,12 @@ using UnityEngine.InputSystem;
 
 public class PlayerSpawnner : MonoBehaviour
 {
-    PlayerInputManager player;
+    PlayerInputManager _playerManager;
    
     public GameObject PlayerPrefab;
 
     public GameObject[] spawnPoint;
-    public GameObject[] playerObjects;
+    public GameObject[] playerObjects = new GameObject[4];
 
     string[] _player = { "Player 1", "Player 2", "Player 3", "Player 4" };
     
@@ -20,14 +20,19 @@ public class PlayerSpawnner : MonoBehaviour
 
     private void Start()
     {
-        player = GetComponent<PlayerInputManager>(); 
+        spawnPoint[0] = GameObject.Find("Spawn 1");
+        spawnPoint[1] = GameObject.Find("Spawn 2");
+        spawnPoint[2] = GameObject.Find("Spawn 3");
+        spawnPoint[3] = GameObject.Find("Spawn 4");
+
+        _playerManager = GetComponent<PlayerInputManager>(); 
         StartCoroutine(setplayerprefab()); // This is to avoid any early instantiation of player
     }
 
     IEnumerator setplayerprefab()
     {
         yield return new WaitForSeconds(1f);
-        player.playerPrefab = PlayerPrefab;
+        _playerManager.playerPrefab = PlayerPrefab;
     }
 
     void OnPlayerJoined(PlayerInput player)

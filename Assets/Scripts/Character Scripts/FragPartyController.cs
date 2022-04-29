@@ -148,7 +148,11 @@ public class FragPartyController : MonoBehaviour
 
 	// animator component bool
 	private bool _hasAnimator;
-	
+
+	//UI
+	private UIControls _ui;
+	public bool unpause = true;
+
 	#endregion
 
 	// object component reference variables
@@ -178,6 +182,7 @@ public class FragPartyController : MonoBehaviour
 	private void Start()
 	{
 		// set component references
+		_ui = FindObjectOfType<UIControls>();
 		_hasAnimator = TryGetComponent(out _animator);
 		_controller = GetComponent<CharacterController>();
 		_input = GetComponent<FragPartyInputs>();
@@ -199,29 +204,52 @@ public class FragPartyController : MonoBehaviour
 	// called once every frame, if the MonoBehaviour is enabled
 	private void Update()
 	{
-		JumpAndGravity();
-		GroundedCheck();
-		Slide();
-		Dive();
-		
-		if (!_animator.GetBool(_animIDSlide) && !_animator.GetBool(_animIDDive))
+		if (!_ui.p.activeSelf)
 		{
-			Move();
+			JumpAndGravity();
+			GroundedCheck();
+			Slide();
+			Dive();
+
+			if (!_animator.GetBool(_animIDSlide) && !_animator.GetBool(_animIDDive))
+			{
+				Move();
+			}
+			Toss();
 		}
-		Toss();
-		
+
+		PauseMenu();
+
 		_inventory.UpdateInventory();
 	}
 
 	private void LateUpdate()
 	{
-		CameraRotation();
+		if (!_ui.p.activeSelf)
+			CameraRotation();
 	}
 
 	#endregion
 
 	#region StandardFunctions
 
+	private void PauseMenu()
+	{
+
+		if (_input.pause)    //Input.GetKeyDown(KeyCode.Escape)
+		{
+			Debug.Log("pause initiated");
+			_ui.pauseMenu();
+		}
+
+		_input.PauseInput(false);
+		//if (_input.pause && !_ui.pauseCheck)    //Input.GetKeyDown(KeyCode.Escape)
+		//{
+		//	unpause = false;
+		//	Debug.Log("pause initiated");
+		//	_ui.pauseMenu();
+		//}
+	}
 	private void TeamAssign()
     {
 		if (PlayerID == 0 || PlayerID == 1)

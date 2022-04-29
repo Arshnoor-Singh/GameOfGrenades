@@ -14,13 +14,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[SelectionBase]
-[RequireComponent(typeof(SphereCollider))]
-public class TheDonutScript : MonoBehaviour
+[SelectionBase]public class TheDonutScript : MonoBehaviour
 {
     //private objects
     private FragPartyController playerController;
     private SlowScript slowingScript;
+    private Grenade_Base GB;
 
     [Header("The donut effects")]
     //effects
@@ -45,6 +44,9 @@ public class TheDonutScript : MonoBehaviour
     private Vector3 _spawnDir = new Vector3(0, 1, 0);
     private bool startTimer = false;
 
+    //testing variables
+    [HideInInspector] public bool CanExplode = true;
+
     private void Start()
     {
         _baseScript = transform.GetComponent<Grenade_Base>();
@@ -59,17 +61,36 @@ public class TheDonutScript : MonoBehaviour
 
     public void Update()
     {
-        if (startTimer)
-            destroyDonut(false, false, true);
+        if (GB.CookingTime >= 0 && CanExplode)
+        {
+            explode();
+        }
+
+        //DEBUG
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            explode();
+        }
+    }
+    void explode()
+    {
+
     }
 
     public void OnCollisionEnter(Collision collision)
     {
+        /*
         if (collision.gameObject.tag == "Player")
         {
             slowPlayer();
             destroyDonut(true, false, false);
             //player.transform.parent = newParent.transform; //-------------------------------------
+        }
+        */
+        Rigidbody rb;
+        if (collision.gameObject.tag == "Player")
+        {
+            //collision.
         }
     }
 
