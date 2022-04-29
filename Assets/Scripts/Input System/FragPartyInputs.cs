@@ -23,7 +23,13 @@ public class FragPartyInputs : MonoBehaviour
     public bool slot_2;
     public bool slot_3;
     public bool slot_4;
-    
+    public bool pause;
+    public bool UINavigateUp;
+    public bool UINavigateDown;
+    public bool UINavigateLeft;
+    public bool UINavigateRight;
+    public bool UISelect;
+
     [Header("Movement Settings")]
     public bool analogMovement;
 
@@ -86,7 +92,37 @@ public class FragPartyInputs : MonoBehaviour
     {
         Slot_4Input(value.isPressed);
     }
-    
+
+    public void OnPause(InputValue value)
+    {
+        PauseInput(value.isPressed);
+    }
+
+    public void OnUINavigateUp(InputValue value)
+    {
+        UINavigateUpInput(value.isPressed);
+    }
+
+    public void OnUINavigateDown(InputValue value)
+    {
+        UINavigateDownInput(value.isPressed);
+    }
+
+    public void OnUINavigateLeft(InputValue value)
+    {
+        UINavigateLeftInput(value.isPressed);
+    }
+
+    public void OnUINavigateRight(InputValue value)
+    {
+        UINavigateRightInput(value.isPressed);
+    }
+
+    public void OnUISelect(InputValue value)
+    {
+        UISelectInput(value.isPressed);
+    }
+
 #else
 // old input sys if we do decide to have it (most likely wont)...
 #endif
@@ -140,6 +176,36 @@ public class FragPartyInputs : MonoBehaviour
     public void Slot_4Input(bool newSlot_4State)
     {
         slot_4 = newSlot_4State;
+    }
+
+    public void PauseInput(bool newPauseState)
+    {
+        pause = newPauseState;
+    }
+
+    public void UINavigateUpInput(bool newNavigateUpState)
+    {
+        UINavigateUp = newNavigateUpState;
+    }
+
+    public void UINavigateDownInput(bool newUINavigateDownState)
+    {
+        UINavigateDown = newUINavigateDownState;
+    }
+
+    public void UINavigateLeftInput(bool newNavigateLeftState)
+    {
+        UINavigateLeft = newNavigateLeftState;
+    }
+
+    public void UINavigateRightInput(bool newNavigateRightState)
+    {
+        UINavigateRight = newNavigateRightState;
+    }
+
+    public void UISelectInput(bool newUISelectState)
+    {
+        UISelect = newUISelectState;
     }
 
 #if !UNITY_IOS || !UNITY_ANDROID
