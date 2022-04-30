@@ -56,11 +56,7 @@ public class ScoreBoard : MonoBehaviour
         if (players.playerObjects[3] != null)
             Player_4_Deaths = players.playerObjects[3].GetComponentInChildren<FragPartyCharacter>().deathCount.ToString();
 
-        //if (players.playerObjects[0] != null || players.playerObjects[1] != null)
-        //    Team_A_Score = (players.playerObjects[0].GetComponentInChildren<FragPartyCharacter>().EnemiesKilled + players.playerObjects[1].GetComponentInChildren<FragPartyCharacter>().EnemiesKilled);
-
-        //if (players.playerObjects[2] != null || players.playerObjects[3] != null)
-        //    Team_B_Score = (players.playerObjects[2].GetComponentInChildren<FragPartyCharacter>().EnemiesKilled + players.playerObjects[3].GetComponentInChildren<FragPartyCharacter>().EnemiesKilled);
+        
 
         if(Team_A_Score == VictoryTarget || Team_B_Score == VictoryTarget)
         {

@@ -91,14 +91,22 @@ public class FragPartyCharacter : MonoBehaviour
     public void KillPoint()
     {
         EnemiesKilled += 1;
+        
+        PlayKillAudio(deathCount, lifeKills);
     }
 
     // Kill the character and trigger their respawning
     public void Kill()
     {
+<<<<<<< Updated upstream
         deathCount += 1;      
+=======
+        deathCount += 1;
+        lifeKills = 0;      
+>>>>>>> Stashed changes
         StartCoroutine(ActivateRagdollAndRespawn()); //This fucntion activates the ragdoll death and then respawns the player
         PlayKillAudio();
+        //PlayKillAudio(deathCount, lifeKills);
     }
 
     void PlayKillAudio()
@@ -133,7 +141,6 @@ public class FragPartyCharacter : MonoBehaviour
         GetComponent<FragPartyController>().enabled = true;
         CharacterControl.enabled = true;
         Cinebrain.enabled = true;
-        isAlive = true;
         SpawnPlayer.Respawn(); //Respawns player
         ResetStats(); //Resets Stats
     }

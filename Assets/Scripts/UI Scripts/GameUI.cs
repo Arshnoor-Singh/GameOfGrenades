@@ -56,18 +56,15 @@ public class GameUI : MonoBehaviour
 
         selectedWeapon = 0;
 
-        currentLife = playerhealth._currentHealth; //MAX_LIFE;
+        currentLife = playerhealth._currentHealth; 
 
         weaponsList.Add(weapon0);
         weaponsList.Add(weapon1);
         weaponsList.Add(weapon2);
         weaponsList.Add(weapon3);
-
-        //uic = this.GetComponent<UIControls>();
-        //if(uic == null)
         
-        uic = FindObjectOfType<UIControls>(); //new UIControls();
-        //uic.qm.gameObject.SetActive(false);
+        uic = FindObjectOfType<UIControls>();
+
     }
 
     // Update is called once per frame
@@ -75,14 +72,14 @@ public class GameUI : MonoBehaviour
     {
         if (Team_Name.Team == "Team_A")
         {
-            enemyScoreTxt.text = score.Team_B_Score.ToString(); //enemyScore.ToString();
-            teamScoreTxt.text = score.Team_A_Score.ToString(); //teamScore.ToString();
+            enemyScoreTxt.text = score.Team_B_Score.ToString(); 
+            teamScoreTxt.text = score.Team_A_Score.ToString(); 
         }
 
         if (Team_Name.Team == "Team_B")
         {
-            enemyScoreTxt.text = score.Team_A_Score.ToString(); //enemyScore.ToString();
-            teamScoreTxt.text = score.Team_B_Score.ToString(); //teamScore.ToString();
+            enemyScoreTxt.text = score.Team_A_Score.ToString(); 
+            teamScoreTxt.text = score.Team_B_Score.ToString(); 
         }
 
         if (uic.p.activeSelf && !uic.qm.activeSelf)
@@ -101,52 +98,9 @@ public class GameUI : MonoBehaviour
             }
         }
 
-        //else if(uic.p.activeSelf && qm.activeSelf)
-        //{
-        //    if (Input.GetKeyDown(KeyCode.Keypad6) || _input.UINavigateRight)
-        //    {
-        //        yesQ.transform.Find("Yes Glow").gameObject.SetActive(false);
-        //        noQ.transform.Find("No Glow").gameObject.SetActive(true);
-        //        _input.UINavigateRight = false;
-        //    }
-
-        //    else if (Input.GetKeyDown(KeyCode.Keypad4) || _input.UINavigateLeft)
-        //    {
-        //        yesQ.transform.Find("Yes Glow").gameObject.SetActive(true);
-        //        noQ.transform.Find("No Glow").gameObject.SetActive(false);
-        //        _input.UINavigateLeft = false;
-        //    }
-
-        //    else if (Input.GetKeyDown(KeyCode.A) && noQ.transform.Find("No Glow").gameObject.activeSelf)
-        //    {
-        //        uic.closeQuitMenu();
-        //    }
-        //}
-
         else
         {
-            //Time
-            //matchTime = matchTime - Time.deltaTime;
-            //int minutes = Mathf.FloorToInt(matchTime / 60);
-            //int seconds = Mathf.FloorToInt(matchTime % 60);
-
-            //if (minutes < 10 && seconds < 10)
-            //{
-            //    timer.text = "0" + minutes.ToString() + ":0" + seconds.ToString();
-            //}
-            //else if (minutes < 10 && seconds >= 10)
-            //{
-            //    timer.text = "0" + minutes.ToString() + ":" + seconds.ToString();
-            //}
-            //else if (minutes >= 10 && seconds < 10)
-            //{
-            //    timer.text = minutes.ToString() + ":0" + seconds.ToString();
-            //}
-            //else if (minutes >= 10 && seconds >= 10)
-            //{
-            //    timer.text = minutes.ToString() + ":" + seconds.ToString();
-            //}
-
+           
             //Change life
             if (Input.GetKeyDown(KeyCode.Space) || _input.UISelect)
             {
