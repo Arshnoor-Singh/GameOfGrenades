@@ -32,9 +32,9 @@ public class FragPartyController : MonoBehaviour
 	
 	[Header("Player Manager")]
 	[Tooltip("The integer ID assigned to the player character at runtime")]
-	[HideInInspector] public int PlayerID;
+	public int PlayerID;
 	[Tooltip("The team ID string assigned to the player at runtime")]
-	[HideInInspector] public string Team;
+	public string Team;
 	
 	[Space(10)]
 	[Header("Player Locomotion")]

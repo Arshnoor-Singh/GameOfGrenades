@@ -5,8 +5,11 @@ using UnityEngine.UI;
 
 public class UIControls : MonoBehaviour
 {
+    public GameObject quitbutton;
     public GameObject p;
     public GameObject qm;
+    GameObject yesQ;
+    GameObject noQ;
     public List<GameObject> menus = new List<GameObject>();
     public List<GameObject> optionsM1 = new List<GameObject>();
     public List<GameObject> optionsM2 = new List<GameObject>();
@@ -32,7 +35,7 @@ public class UIControls : MonoBehaviour
     GameObject m5;
     public GameObject dropdowns;
 
-    public int currentMenu = 1;
+    public int currentMenu = 0;
     int selectedOption = 0;
     int overallIndex = 0;
     int musicIndex = 8;
@@ -40,15 +43,23 @@ public class UIControls : MonoBehaviour
     int brightnessIndex = 10;
 
     public bool pauseCheck = false;
-    public FragPartyInputs _input;
+
+    private void Awake()
+    {
+        p.SetActive(true);
+        qm.SetActive(true);
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        //_input = FindObjectOfType<FragPartyInputs>();
         overallTxt.text = overallIndex.ToString();
         musicTxt.text = musicIndex.ToString();
         fxTxt.text = fxIndex.ToString();
         brightnessTxt.text = brightnessIndex.ToString();
+
+        yesQ = GameObject.Find("YES");
+        noQ = GameObject.Find("NO");
 
         dropdowns = GameObject.Find("Dropdowns");
 
@@ -107,6 +118,7 @@ public class UIControls : MonoBehaviour
         menus.Add(m5);
 
         p.SetActive(false);
+        qm.SetActive(false);
     }
 
     public void pauseMenu()
@@ -136,302 +148,337 @@ public class UIControls : MonoBehaviour
     }
 
 
-    public void AudioMenu()
+    //public void AudioMenu()
+    //{
+    //    for (int i = 0; i < menus.Count; i++)
+    //    {
+    //        if (i == currentMenu)
+    //        {
+    //            menus[i].gameObject.SetActive(true);
+    //        }
+    //        else
+    //        {
+    //            menus[i].gameObject.SetActive(false);
+    //        }
+    //    }
+    //}
+
+    public void UIManager(FragPartyInputs _input_)
     {
-        for (int i = 0; i < menus.Count; i++)
+        if (p.activeSelf)
         {
-            if (i == currentMenu)
+            for (int i = 0; i < menus.Count; i++)
             {
-                menus[i].gameObject.SetActive(true);
-            }
-            else
-            {
-                menus[i].gameObject.SetActive(false);
-            }
-        }
-    }
-
-    public void BackButton()
-    {
-
-    }
-
-   
-
-    // Update is called once per frame
-    void Update()
-    {
-      
-
-        for (int i = 0; i < menus.Count; i++)
-        {
-            if(i == currentMenu)
-            {
-                menus[i].gameObject.SetActive(true);
-            }
-            else
-            {
-                menus[i].gameObject.SetActive(false);
-            }
-        }
-
-        if (currentMenu == 0)
-        {
-            for (int i = 0; i < optionsM1.Count; i++)
-            {
-                if (i == selectedOption)
+                if (i == currentMenu)
                 {
-                    optionsM1[selectedOption].transform.Find("Glow").gameObject.SetActive(true);
-                    if (Input.GetKeyDown(KeyCode.Space) || _input.UISelect)
+                    menus[i].gameObject.SetActive(true);
+                }
+                else
+                {
+                    menus[i].gameObject.SetActive(false);
+                }
+            }
+
+            if (currentMenu == 0)
+            {
+                quitbutton.SetActive(true);
+                for (int i = 0; i < optionsM1.Count; i++)
+                {
+                    if (i == selectedOption)
                     {
-                        string nom = optionsM1[selectedOption].name;
+                        optionsM1[selectedOption].transform.Find("Glow").gameObject.SetActive(true);
+                        if (Input.GetKeyDown(KeyCode.Space) || _input_.UISelect)
+                        {
+                            quitbutton.SetActive(false);
+                            string nom = optionsM1[selectedOption].name;
+                            if (nom == "Quit")
+                            {
+                                qm.SetActive(true);
+                            }
+                            else if (nom == "Back")
+                            {
+                                p.SetActive(false);
+                            }
+                            else
+                            {
+                                changeMenus(i + 1);
+                            }
+
+                            _input_.UISelect = false;
+                        }
+                    }
+
+                    else
+                    {
+                        optionsM1[i].transform.Find("Glow").gameObject.SetActive(false);
+                    }
+                }
+            }
+
+            if (currentMenu == 1)
+            {
+                for (int i = 0; i < optionsM2.Count; i++)
+                {
+                    if (i == selectedOption)
+                    {
+                        optionsM2[selectedOption].transform.Find("Glow").gameObject.SetActive(true);
+                        if (Input.GetKeyDown(KeyCode.Keypad6) || _input_.UINavigateRight)
+                        {
+                            string nom = optionsM2[selectedOption].name;
+                            if (nom != "Quit" && nom != "Back")
+                            {
+                                int counter = int.Parse(optionsM2[selectedOption].transform.Find("Counter").gameObject.GetComponent<Text>().text);
+                                counter++;
+                                if (counter < 11)
+                                {
+                                    optionsM2[selectedOption].transform.Find("Counter").gameObject.GetComponent<Text>().text = counter.ToString();
+                                    optionsM2[selectedOption].transform.Find("Bar Value").gameObject.GetComponent<Image>().sprite = SettingsBars[counter];
+                                }
+                                else
+                                {
+                                    counter--;
+                                }
+                            }
+                            _input_.UINavigateRight = false;
+                        }
+                        else if (Input.GetKeyDown(KeyCode.Keypad4) || _input_.UINavigateLeft)
+                        {
+                            string nom = optionsM2[selectedOption].name;
+                            if (nom != "Quit" && nom != "Back")
+                            {
+                                int counter = int.Parse(optionsM2[selectedOption].transform.Find("Counter").gameObject.GetComponent<Text>().text);
+                                counter--;
+                                if (counter >= 0)
+                                {
+                                    optionsM2[selectedOption].transform.Find("Counter").gameObject.GetComponent<Text>().text = counter.ToString();
+                                    optionsM2[selectedOption].transform.Find("Bar Value").gameObject.GetComponent<Image>().sprite = SettingsBars[counter];
+                                }
+                                else
+                                {
+                                    counter++;
+                                }
+                            }
+                            _input_.UINavigateLeft = false;
+                        }
+                        else if (Input.GetKeyDown(KeyCode.Space) || _input_.UISelect)
+                        {
+                            quitbutton.SetActive(true);
+
+                            string nom = optionsM2[selectedOption].name;
+                            if (nom == "Quit")
+                            {
+                                qm.SetActive(true);
+                            }
+                            else if (nom == "Back")
+                            {
+                                changeMenus(0);
+                            }
+                            _input_.UISelect = false;
+                        }
+                    }
+                    else
+                    {
+                        optionsM2[i].transform.Find("Glow").gameObject.SetActive(false);
+                    }
+                }
+            }
+
+            if (currentMenu == 2)
+            {
+                quitbutton.SetActive(false);
+
+                for (int i = 0; i < optionsM3.Count; i++)
+                {
+                    if (i == selectedOption)
+                    {
+                        optionsM3[selectedOption].transform.Find("Glow").gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        optionsM3[i].transform.Find("Glow").gameObject.SetActive(false);
+                    }
+                }
+
+                string nom = optionsM3[selectedOption].name;
+                if ((Input.GetKeyDown(KeyCode.Keypad6) || _input_.UINavigateRight) && nom == "Brightness")
+                {
+                    int counter = int.Parse(optionsM3[selectedOption].transform.Find("Counter").gameObject.GetComponent<Text>().text);
+                    counter++;
+                    if (counter < 11)
+                    {
+                        optionsM3[selectedOption].transform.Find("Counter").gameObject.GetComponent<Text>().text = counter.ToString();
+                        optionsM3[selectedOption].transform.Find("Bar Value").gameObject.GetComponent<Image>().sprite = SettingsBars[counter];
+                    }
+                    else
+                    {
+                        counter--;
+                    }
+                    _input_.UINavigateRight = false;
+                }
+
+                else if ((Input.GetKeyDown(KeyCode.Keypad4) || _input_.UINavigateLeft) && nom == "Brightness")
+                {
+                    int counter = int.Parse(optionsM3[selectedOption].transform.Find("Counter").gameObject.GetComponent<Text>().text);
+                    counter--;
+                    if (counter >= 0)
+                    {
+                        optionsM3[selectedOption].transform.Find("Counter").gameObject.GetComponent<Text>().text = counter.ToString();
+                        optionsM3[selectedOption].transform.Find("Bar Value").gameObject.GetComponent<Image>().sprite = SettingsBars[counter];
+                    }
+                    else
+                    {
+                        counter++;
+                    }
+                    _input_.UINavigateLeft = false;
+                }
+
+                else if (Input.GetKeyDown(KeyCode.Space) || _input_.UISelect)
+                {
+                    if (nom == "Quit")
+                    {
+                        qm.SetActive(true);
+                    }
+                    else if (nom == "Back")
+                    {
+                        changeMenus(0);
+                    }
+                    quitbutton.SetActive(true);
+                    _input_.UISelect = false;
+                }
+
+                else if (nom == "Resolution" && (Input.GetKeyDown(KeyCode.Keypad5) || _input_.UISelect))
+                {
+                    bool tf = dropdowns.transform.GetChild(0).gameObject.activeSelf;
+                    dropdowns.transform.GetChild(0).gameObject.SetActive(!tf);
+                    _input_.UISelect = false;
+                }
+
+                else if (nom == "Window Mode" && (Input.GetKeyDown(KeyCode.Keypad5) || _input_.UISelect))
+                {
+                    bool tf = dropdowns.transform.GetChild(1).gameObject.activeSelf;
+                    dropdowns.transform.GetChild(1).gameObject.SetActive(!tf);
+                    _input_.UISelect = false;
+
+                }
+            }
+
+            if (currentMenu == 3)
+            {
+                quitbutton.SetActive(false);
+                for (int i = 0; i < optionsM4.Count; i++)
+                {
+                    string nom = optionsM4[selectedOption].name;
+                    if (i == selectedOption)
+                    {
+                        optionsM4[selectedOption].transform.Find("Glow").gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        optionsM4[i].transform.Find("Glow").gameObject.SetActive(false);
+                    }
+
+                    if (Input.GetKeyDown(KeyCode.Space) || _input_.UISelect)
+                    {
                         if (nom == "Quit")
                         {
                             qm.SetActive(true);
                         }
                         else if (nom == "Back")
                         {
-                            p.SetActive(false);
+                            changeMenus(0);
                         }
-                        else
-                        {
-                            changeMenus(i + 1);
-                        }
-
-                        _input.UISelect = false;
+                        quitbutton.SetActive(true);
+                        _input_.UISelect = false;
                     }
-                }
 
-                else
-                {
-                    optionsM1[i].transform.Find("Glow").gameObject.SetActive(false);
+                    else if (nom == "Texture Quality" && (Input.GetKeyDown(KeyCode.Keypad5) || _input_.UISelect))
+                    {
+                        bool tf = dropdowns.transform.GetChild(3).gameObject.activeSelf;
+                        dropdowns.transform.GetChild(3).gameObject.SetActive(!tf);
+                        _input_.UISelect = false;
+                    }
+
+                    else if (nom == "Detail" && (Input.GetKeyDown(KeyCode.Keypad5) || _input_.UISelect))
+                    {
+                        bool tf = dropdowns.transform.GetChild(4).gameObject.activeSelf;
+                        dropdowns.transform.GetChild(4).gameObject.SetActive(!tf);
+                        _input_.UISelect = false;
+                    }
+
+                    else if (nom == "Colorblind Mode" && (Input.GetKeyDown(KeyCode.Keypad5) || _input_.UISelect))
+                    {
+                        bool tf = dropdowns.transform.GetChild(5).gameObject.activeSelf;
+                        dropdowns.transform.GetChild(5).gameObject.SetActive(!tf);
+                        _input_.UISelect = false;
+                    }
                 }
             }
-        }
 
-        if(currentMenu == 1)
-        {
-            for (int i = 0; i < optionsM2.Count; i++)
+            if (currentMenu == 4)
             {
-                if (i == selectedOption)
+                quitbutton.SetActive(false);
+                for (int i = 0; i < optionsM5.Count; i++)
                 {
-                    optionsM2[selectedOption].transform.Find("Glow").gameObject.SetActive(true);
-                    if (Input.GetKeyDown(KeyCode.Keypad6) || _input.UINavigateRight)
+                    string nom = optionsM5[selectedOption].name;
+                    if (i == selectedOption)
                     {
-                        string nom = optionsM2[selectedOption].name;
-                        if(nom != "Quit" && nom != "Back")
-                        {
-                            int counter = int.Parse(optionsM2[selectedOption].transform.Find("Counter").gameObject.GetComponent<Text>().text);
-                            counter++;
-                            if (counter < 11)
-                            {
-                                optionsM2[selectedOption].transform.Find("Counter").gameObject.GetComponent<Text>().text = counter.ToString();
-                                optionsM2[selectedOption].transform.Find("Bar Value").gameObject.GetComponent<Image>().sprite = SettingsBars[counter];
-                            }
-                            else
-                            {
-                                counter--;
-                            }
-                        }
-                        _input.UINavigateRight = false;
+                        optionsM5[selectedOption].transform.Find("Glow").gameObject.SetActive(true);
                     }
-                    else if (Input.GetKeyDown(KeyCode.Keypad4) || _input.UINavigateLeft)
+                    else
                     {
-                        string nom = optionsM2[selectedOption].name;
-                        if(nom != "Quit" && nom != "Back")
-                        {
-                            int counter = int.Parse(optionsM2[selectedOption].transform.Find("Counter").gameObject.GetComponent<Text>().text);
-                            counter--;
-                            if (counter >= 0)
-                            {
-                                optionsM2[selectedOption].transform.Find("Counter").gameObject.GetComponent<Text>().text = counter.ToString();
-                                optionsM2[selectedOption].transform.Find("Bar Value").gameObject.GetComponent<Image>().sprite = SettingsBars[counter];
-                            }
-                            else
-                            {
-                                counter++;
-                            }
-                        }
-                        _input.UINavigateLeft = false;
+                        optionsM5[i].transform.Find("Glow").gameObject.SetActive(false);
                     }
-                    else if (Input.GetKeyDown(KeyCode.Space) || _input.UISelect)
+
+                    if (Input.GetKeyDown(KeyCode.Space) || _input_.UISelect)
                     {
-                        string nom = optionsM2[selectedOption].name;
-                        if(nom == "Quit")
+
+                        if (nom == "Quit")
                         {
                             qm.SetActive(true);
                         }
-                        else if(nom == "Back")
+                        else if (nom == "Back")
                         {
                             changeMenus(0);
                         }
-                        _input.UISelect = false;
+                        quitbutton.SetActive(true);
+                        _input_.UISelect = false;
                     }
                 }
-                else
-                {
-                    optionsM2[i].transform.Find("Glow").gameObject.SetActive(false);
-                }
-            }
-        }
-
-        if (currentMenu == 2)
-        {
-            for (int i = 0; i < optionsM3.Count; i++)
-            {
-                if (i == selectedOption)
-                {
-                    optionsM3[selectedOption].transform.Find("Glow").gameObject.SetActive(true);
-                }
-                else
-                {
-                    optionsM3[i].transform.Find("Glow").gameObject.SetActive(false);
-                }
             }
 
-            string nom = optionsM3[selectedOption].name;
-            if ((Input.GetKeyDown(KeyCode.Keypad6) || _input.UINavigateRight) && nom == "Brightness")
+            if (p.activeSelf && qm.activeSelf)
             {
-                int counter = int.Parse(optionsM3[selectedOption].transform.Find("Counter").gameObject.GetComponent<Text>().text);
-                counter++;
-                if (counter < 11)
+                if (Input.GetKeyDown(KeyCode.Keypad6) || _input_.UINavigateRight)
                 {
-                    optionsM3[selectedOption].transform.Find("Counter").gameObject.GetComponent<Text>().text = counter.ToString();
-                    optionsM3[selectedOption].transform.Find("Bar Value").gameObject.GetComponent<Image>().sprite = SettingsBars[counter];
+                    yesQ.transform.Find("Yes Glow").gameObject.SetActive(false);
+                    noQ.transform.Find("No Glow").gameObject.SetActive(true);
+                    _input_.UINavigateRight = false;
                 }
-                else
-                {
-                    counter--;
-                }
-                _input.UINavigateRight = false;
-            }
 
-            else if ((Input.GetKeyDown(KeyCode.Keypad4) || _input.UINavigateLeft ) && nom == "Brightness")
-            {
-                int counter = int.Parse(optionsM3[selectedOption].transform.Find("Counter").gameObject.GetComponent<Text>().text);
-                counter--;
-                if (counter >= 0)
+                else if (Input.GetKeyDown(KeyCode.Keypad4) || _input_.UINavigateLeft)
                 {
-                    optionsM3[selectedOption].transform.Find("Counter").gameObject.GetComponent<Text>().text = counter.ToString();
-                    optionsM3[selectedOption].transform.Find("Bar Value").gameObject.GetComponent<Image>().sprite = SettingsBars[counter];
+                    yesQ.transform.Find("Yes Glow").gameObject.SetActive(true);
+                    noQ.transform.Find("No Glow").gameObject.SetActive(false);
+                    _input_.UINavigateLeft = false;
                 }
-                else
-                {
-                    counter++;
-                }
-                _input.UINavigateLeft = false;
-            }
 
-            else if (Input.GetKeyDown(KeyCode.Space) || _input.UISelect)
-            {
-                if (nom == "Quit")
+                else if ((Input.GetKeyDown(KeyCode.Space) || _input_.UISelect) && noQ.transform.Find("No Glow").gameObject.activeSelf)
                 {
-                    qm.SetActive(true);
+                    closeQuitMenu();
+                    _input_.UISelect = false;
                 }
-                else if (nom == "Back")
+
+                else if ((Input.GetKeyDown(KeyCode.Space) || _input_.UISelect) && yesQ.transform.Find("Yes Glow").gameObject.activeSelf)
                 {
-                    changeMenus(0);
+                    Debug.Log("QUIT_GAME");
+                    Application.Quit();
+                    _input_.UISelect = false;
                 }
-                _input.UISelect = false;
-            }
-
-            else if (nom == "Resolution" && (Input.GetKeyDown(KeyCode.Keypad5) || _input.UISelect))
-            {
-                bool tf = dropdowns.transform.GetChild(0).gameObject.activeSelf;
-                dropdowns.transform.GetChild(0).gameObject.SetActive(!tf);
-                _input.UISelect = false;
-            }
-
-            else if (nom == "Window Mode" && (Input.GetKeyDown(KeyCode.Keypad5) || _input.UISelect))
-            {
-                bool tf = dropdowns.transform.GetChild(1).gameObject.activeSelf;
-                dropdowns.transform.GetChild(1).gameObject.SetActive(!tf);
-                _input.UISelect = false;
 
             }
         }
-
-        if(currentMenu == 3)
-        {
-            for (int i = 0; i < optionsM4.Count; i++)
-            {
-                string nom = optionsM4[selectedOption].name;
-                if (i == selectedOption)
-                {
-                    optionsM4[selectedOption].transform.Find("Glow").gameObject.SetActive(true);
-                }
-                else
-                {
-                    optionsM4[i].transform.Find("Glow").gameObject.SetActive(false);
-                }
-
-                if (Input.GetKeyDown(KeyCode.Space) || _input.UISelect)
-                {
-                    if (nom == "Quit")
-                    {
-                        qm.SetActive(true);
-                    }
-                    else if (nom == "Back")
-                    {
-                        changeMenus(0);
-                    }
-                    _input.UISelect = false;
-                }
-
-                else if (nom == "Texture Quality" && (Input.GetKeyDown(KeyCode.Keypad5) || _input.UISelect))
-                {
-                    bool tf = dropdowns.transform.GetChild(3).gameObject.activeSelf;
-                    dropdowns.transform.GetChild(3).gameObject.SetActive(!tf);
-                    _input.UISelect = false;
-                }
-
-                else if (nom == "Detail" && (Input.GetKeyDown(KeyCode.Keypad5) || _input.UISelect))
-                {
-                    bool tf = dropdowns.transform.GetChild(4).gameObject.activeSelf;
-                    dropdowns.transform.GetChild(4).gameObject.SetActive(!tf);
-                    _input.UISelect = false;
-                }
-
-                else if (nom == "Colorblind Mode" && (Input.GetKeyDown(KeyCode.Keypad5) || _input.UISelect))
-                {
-                    bool tf = dropdowns.transform.GetChild(5).gameObject.activeSelf;
-                    dropdowns.transform.GetChild(5).gameObject.SetActive(!tf);
-                    _input.UISelect = false;
-                }
-            }
-        }
-
-        if (currentMenu == 4)
-        {
-            for (int i = 0; i < optionsM5.Count; i++)
-            {
-                string nom = optionsM5[selectedOption].name;
-                if (i == selectedOption)
-                {
-                    optionsM5[selectedOption].transform.Find("Glow").gameObject.SetActive(true);
-                }
-                else
-                {
-                    optionsM5[i].transform.Find("Glow").gameObject.SetActive(false);
-                }
-
-                if (Input.GetKeyDown(KeyCode.Space) || _input.UISelect)
-                {
-                    
-                    if (nom == "Quit")
-                    {
-                        qm.SetActive(true);
-                    }
-                    else if (nom == "Back")
-                    {
-                        changeMenus(0);
-                    }
-                    _input.UISelect = false;
-                }
-            }
-        }
+       
     }
-
     public void changeMenus(int n)
     {
         currentMenu = n;

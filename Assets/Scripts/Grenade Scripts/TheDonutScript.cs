@@ -1,5 +1,5 @@
 /*
- * Authors: José Javier Ortiz Vega
+ * Authors: JosÃ© Javier Ortiz Vega
  * Date Created:4/18/2022
  * Date Edited: 4/23/2022
  * Description: Donut Script 
@@ -72,8 +72,7 @@ using UnityEngine;
             collision.transform.GetComponent<FragPartyCharacter>().Damage(10, GB.GrenadeOwner);
             StartCoroutine(destroyDonut());
         }
-        else
-            StartCoroutine(destroyDonut());
+
     }
 
     IEnumerator destroyDonut()

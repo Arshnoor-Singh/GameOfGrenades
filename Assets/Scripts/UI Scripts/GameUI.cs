@@ -25,16 +25,16 @@ public class GameUI : MonoBehaviour
 
     bool isPaused = false;
     public Text timer;
-    Text teamScoreTxt;
-    Text enemyScoreTxt;
+    public Text teamScoreTxt;
+    public Text enemyScoreTxt;
     UIControls uic;
     public GameObject qm;
     GameObject yesQ;
     GameObject noQ;
 
-    FragPartyInputs _input;
+    public FragPartyInputs _input;
     ScoreBoard score;
-    int playerid;
+    FragPartyController Team_Name;
     FragPartyCharacter playerhealth;
 
     // Start is called before the first frame update
@@ -44,11 +44,9 @@ public class GameUI : MonoBehaviour
         noQ = GameObject.Find("NO");
         teamScore = 0;
         enemyScore = 0;
-        teamScoreTxt = GameObject.Find("TW text").gameObject.GetComponent<Text>();
-        enemyScoreTxt = GameObject.Find("EW text").gameObject.GetComponent<Text>();
-        _input = FindObjectOfType<FragPartyInputs>();
+        _input = transform.parent.GetComponentInChildren<FragPartyInputs>();
         score = FindObjectOfType<ScoreBoard>();
-        playerid = transform.parent.GetComponentInChildren<FragPartyController>().PlayerID;
+        Team_Name = transform.parent.GetComponentInChildren<FragPartyController>();
         playerhealth = transform.parent.GetComponentInChildren<FragPartyCharacter>();
 
         if (lifeBarBack != null)
@@ -67,22 +65,25 @@ public class GameUI : MonoBehaviour
 
         //uic = this.GetComponent<UIControls>();
         //if(uic == null)
-        {
-            uic = FindObjectOfType<UIControls>(); //new UIControls();
-        }
-        uic.qm.gameObject.SetActive(false);
+        
+        uic = FindObjectOfType<UIControls>(); //new UIControls();
+        //uic.qm.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(playerid == 0 || playerid == 1)
+        if (Team_Name.Team == "Team_A")
+        {
             enemyScoreTxt.text = score.Team_B_Score.ToString(); //enemyScore.ToString();
             teamScoreTxt.text = score.Team_A_Score.ToString(); //teamScore.ToString();
+        }
 
-        if (playerid == 2 || playerid == 3)
+        if (Team_Name.Team == "Team_B")
+        {
             enemyScoreTxt.text = score.Team_A_Score.ToString(); //enemyScore.ToString();
             teamScoreTxt.text = score.Team_B_Score.ToString(); //teamScore.ToString();
+        }
 
         if (uic.p.activeSelf && !uic.qm.activeSelf)
         {
@@ -100,27 +101,27 @@ public class GameUI : MonoBehaviour
             }
         }
 
-        else if(uic.p.activeSelf && qm.activeSelf)
-        {
-            if (Input.GetKeyDown(KeyCode.Keypad6) || _input.UINavigateRight)
-            {
-                yesQ.transform.Find("Yes Glow").gameObject.SetActive(false);
-                noQ.transform.Find("No Glow").gameObject.SetActive(true);
-                _input.UINavigateRight = false;
-            }
+        //else if(uic.p.activeSelf && qm.activeSelf)
+        //{
+        //    if (Input.GetKeyDown(KeyCode.Keypad6) || _input.UINavigateRight)
+        //    {
+        //        yesQ.transform.Find("Yes Glow").gameObject.SetActive(false);
+        //        noQ.transform.Find("No Glow").gameObject.SetActive(true);
+        //        _input.UINavigateRight = false;
+        //    }
 
-            else if (Input.GetKeyDown(KeyCode.Keypad4) || _input.UINavigateLeft)
-            {
-                yesQ.transform.Find("Yes Glow").gameObject.SetActive(true);
-                noQ.transform.Find("No Glow").gameObject.SetActive(false);
-                _input.UINavigateLeft = false;
-            }
+        //    else if (Input.GetKeyDown(KeyCode.Keypad4) || _input.UINavigateLeft)
+        //    {
+        //        yesQ.transform.Find("Yes Glow").gameObject.SetActive(true);
+        //        noQ.transform.Find("No Glow").gameObject.SetActive(false);
+        //        _input.UINavigateLeft = false;
+        //    }
 
-            else if (Input.GetKeyDown(KeyCode.A) && noQ.transform.Find("No Glow").gameObject.activeSelf)
-            {
-                uic.closeQuitMenu();
-            }
-        }
+        //    else if (Input.GetKeyDown(KeyCode.A) && noQ.transform.Find("No Glow").gameObject.activeSelf)
+        //    {
+        //        uic.closeQuitMenu();
+        //    }
+        //}
 
         else
         {
@@ -150,29 +151,30 @@ public class GameUI : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space) || _input.UISelect)
             {
                 //changeLifeBar(5);
+  
                 _input.UISelect = false;
             }
 
             //Change weapons
-            else if (Input.GetKeyDown(KeyCode.Keypad8) || _input.UINavigateUp)
+            else if ((Input.GetKeyDown(KeyCode.Keypad8) || _input.UINavigateUp) && !uic.p.activeSelf && !uic.qm.activeSelf)
             {
                 changeWeapon(0);
                 _input.UINavigateUp = false;
             }
 
-            else if (Input.GetKeyDown(KeyCode.Keypad6) || _input.UINavigateRight)
+            else if ((Input.GetKeyDown(KeyCode.Keypad6) || _input.UINavigateRight) && !uic.p.activeSelf && !uic.qm.activeSelf)
             {
                 changeWeapon(2);
                 _input.UINavigateRight = false;
             }
 
-            else if (Input.GetKeyDown(KeyCode.Keypad2) || _input.UINavigateDown)
+            else if ((Input.GetKeyDown(KeyCode.Keypad2) || _input.UINavigateDown) && !uic.p.activeSelf && !uic.qm.activeSelf)
             {
                 changeWeapon(3);
                 _input.UINavigateDown = false;
             }
 
-            else if (Input.GetKeyDown(KeyCode.Keypad4) || _input.UINavigateLeft)
+            else if ((Input.GetKeyDown(KeyCode.Keypad4) || _input.UINavigateLeft) && !uic.p.activeSelf && !uic.qm.activeSelf)
             {
                 changeWeapon(1);
                 _input.UINavigateLeft = false;
@@ -180,12 +182,9 @@ public class GameUI : MonoBehaviour
 
             changeLifeBar(currentLife);
         }
-        
-        //Activate the pause menu
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            //pauseMenu();
-        }
+
+
+        uic.UIManager(_input);
 
     }
 
@@ -212,11 +211,5 @@ public class GameUI : MonoBehaviour
             weaponsList[selectedWeapon].GetComponent<Weapon>().Grow();
         }
         Debug.Log(selectedWeapon);
-    }
-
-    void pauseMenu()
-    {
-        //uic.p.SetActive(!uic.p.activeSelf);
-        //uic.resetMenuCounter();
     }
 }
