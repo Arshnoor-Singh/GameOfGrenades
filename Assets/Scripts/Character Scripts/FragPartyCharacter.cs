@@ -105,7 +105,6 @@ public class FragPartyCharacter : MonoBehaviour
         lifeKills = 0;      
 >>>>>>> Stashed changes
         StartCoroutine(ActivateRagdollAndRespawn()); //This fucntion activates the ragdoll death and then respawns the player
-        PlayKillAudio();
         //PlayKillAudio(deathCount, lifeKills);
     }
 
