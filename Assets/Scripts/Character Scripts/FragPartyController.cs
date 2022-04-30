@@ -254,14 +254,14 @@ public class FragPartyController : MonoBehaviour
 	}
 	private void TeamAssign()
     {
-		if (PlayerID == 0 || PlayerID == 1)
+		if (PlayerID == 0 || PlayerID == 2)
 		{
 			Team = "Team_A";
 			_teamAOutfit.SetActive(true);
 			Debug.Log("Team A");
 		}
 
-		if (PlayerID == 2 || PlayerID == 3)
+		if (PlayerID == 1 || PlayerID == 3)
 		{
 			Team = "Team_B";
 			_teamBOutfit.SetActive(true);
