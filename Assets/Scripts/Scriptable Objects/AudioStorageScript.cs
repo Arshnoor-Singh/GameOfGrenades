@@ -204,7 +204,7 @@ public class AudioStorageScript : ScriptableObject
         if (milestone == 1)
             return Milestone1Sounds[Random.Range(0, Milestone1Sounds.Count - 1)];
         else if (milestone == 2)
-            return Milestone2Sounds[Random.Range(0, Milestone2Sounds.Count -1)];
+            return Milestone2Sounds[Random.Range(0, Milestone2Sounds.Count - 1)];
         else if (milestone == 3)
             return Milestone3Sounds[Random.Range(0, Milestone3Sounds.Count - 1)];
         else if (milestone == 4)

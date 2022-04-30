@@ -51,6 +51,7 @@ using UnityEngine;
     {
         _baseScript = transform.GetComponent<Grenade_Base>();
         _audioSource = GetComponent<AudioSource>();
+        GB = transform.GetComponentInParent<Grenade_Base>();
 
         //              Debug
         //************************************
@@ -61,94 +62,23 @@ using UnityEngine;
 
     public void Update()
     {
-        if (GB.CookingTime >= 0 && CanExplode)
-        {
-            explode();
-        }
-
-        //DEBUG
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            explode();
-        }
-    }
-    void explode()
-    {
-
+        
     }
 
     public void OnCollisionEnter(Collision collision)
     {
-        /*
         if (collision.gameObject.tag == "Player")
         {
-            slowPlayer();
-            destroyDonut(true, false, false);
-            //player.transform.parent = newParent.transform; //-------------------------------------
+            collision.transform.GetComponent<FragPartyCharacter>().Damage(10, GB.GrenadeOwner);
+            StartCoroutine(destroyDonut());
         }
-        */
-        Rigidbody rb;
-        if (collision.gameObject.tag == "Player")
-        {
-            //collision.
-        }
+        else
+            StartCoroutine(destroyDonut());
     }
 
-    //slow players based on the script's 
-    private void slowPlayer()
+    IEnumerator destroyDonut()
     {
-        slowingScript.SlowDownPlayer((playerController.moveSpeed * slowAmount), slowTime);
-    }
-
-    private void destroyDonut(bool didItHitAPlayer, bool playerCollected, bool startTimer)
-    {
-        //artificial timer for the grenade
-        float timer = 0;
-
-        //either hit a player or hit the ground
-        if (didItHitAPlayer)
-        {
-            Destroy(gameObject);
-
-            _audioSource.clip = _explosionSound;
-            _audioSource.Play();
-
-            //add vfx
-        }
-        else if (!didItHitAPlayer)
-        {
-            _audioSource.clip = _collectionSound;
-            _audioSource.Play();
-
-            startTimer = true;
-        }
-
-        //was interacted by the player while it was in the ground
-        if (playerCollected)
-        {
-            Destroy(gameObject);
-
-            //heal the player
-            slowingScript.healPlayer(healthToRestore);
-
-            _audioSource.clip = _collectionSound;
-            _audioSource.Play();
-        }
-
-        //destroy on timer
-        if (startTimer)
-        {
-            if (!startTimer)
-                startTimer = true;
-
-            timer += Time.deltaTime;
-
-            if (timer >= slowTime)
-            {
-                Destroy(gameObject);
-                _audioSource.clip = _explosionSound;
-                _audioSource.Play();
-            }
-        }
+        yield return new WaitForSeconds(GB.CookingTime);
+        Destroy(gameObject);
     }
 }
