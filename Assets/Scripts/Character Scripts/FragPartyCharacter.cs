@@ -18,6 +18,7 @@ public class FragPartyCharacter : MonoBehaviour
 
     public int EnemiesKilled = 0;
     public int deathCount = 0;
+    public int lifeKills = 0;
     public Text playerId;
     public bool isAlive = true;
 
@@ -98,23 +99,62 @@ public class FragPartyCharacter : MonoBehaviour
     // Kill the character and trigger their respawning
     public void Kill()
     {
-<<<<<<< Updated upstream
-        deathCount += 1;      
-=======
         deathCount += 1;
         lifeKills = 0;      
->>>>>>> Stashed changes
         StartCoroutine(ActivateRagdollAndRespawn()); //This fucntion activates the ragdoll death and then respawns the player
         //PlayKillAudio(deathCount, lifeKills);
     }
 
-    void PlayKillAudio()
+    void PlayKillAudio(int deathCounts, int lifeKills)
     {
 
-        Audio.clip = AudioScript.randomMilestoneClip(Random.Range(1, 5));
+        //milestone------------------------------------------------------
+        //milestone 1
+        if (lifeKills == 5)
+        {
+            Audio.clip = AudioScript.randomMilestoneClip(1);
+            Audio.Play();
+        }
 
-        Audio.Play();
+        //milestone 2
+        if (lifeKills == 10)
+        {
+            Audio.clip = AudioScript.randomMilestoneClip(2);
+            Audio.Play();
+        }
+
+        //milestone 3
+        if (lifeKills == 15)
+        {
+            Audio.clip = AudioScript.randomMilestoneClip(3);
+            Audio.Play();
+        }
+        //milestone------------------------------------------------------
+
+        //killstreak-----------------------------------------------------
+        if (lifeKills < 5)
+        {
+            Audio.clip = AudioScript.randomMultiEliminationClip(1);
+            Audio.Play();
+        }
+        else if (lifeKills != 5 && lifeKills < 10)
+        {
+            Audio.clip = AudioScript.randomMultiEliminationClip(2);
+            Audio.Play();
+        }
+        else if (lifeKills != 10 && lifeKills < 15)
+        {
+            Audio.clip = AudioScript.randomMultiEliminationClip(3);
+            Audio.Play();
+        }
+        else
+        {
+            Audio.clip = AudioScript.randomMultiEliminationClip(4);
+            Audio.Play();
+        }
+        //killstreak-----------------------------------------------------
     }
+
 
     private void ResetStats()
     {
