@@ -163,6 +163,8 @@ public class FragPartyController : MonoBehaviour
 	private FragPartyInputs _input;
 	private GrenadeInventory _inventory;
 	[SerializeField] private Transform _grenadeRoot;
+	[SerializeField] private GameObject _teamAOutfit;
+	[SerializeField] private GameObject _teamBOutfit;
 
 	#endregion
 
@@ -255,12 +257,14 @@ public class FragPartyController : MonoBehaviour
 		if (PlayerID == 0 || PlayerID == 1)
 		{
 			Team = "Team_A";
+			_teamAOutfit.SetActive(true);
 			Debug.Log("Team A");
 		}
 
 		if (PlayerID == 2 || PlayerID == 3)
 		{
 			Team = "Team_B";
+			_teamBOutfit.SetActive(true);
 			Debug.Log("Team B");
 		}
 	}

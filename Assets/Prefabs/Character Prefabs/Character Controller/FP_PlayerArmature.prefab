@@ -973,12 +973,12 @@ GameObject:
   m_Component:
   - component: {fileID: 2918802538009467766}
   m_Layer: 0
-  m_Name: Team_A
+  m_Name: Team_A_Outfit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2918802538009467766
 Transform:
   m_ObjectHideFlags: 0
@@ -1301,6 +1301,8 @@ MonoBehaviour:
   lockCameraPosition: 0
   unpause: 1
   _grenadeRoot: {fileID: 1108846447}
+  _teamAOutfit: {fileID: 0}
+  _teamBOutfit: {fileID: 0}
 --- !u!114 &6098394087744054365
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2335,7 +2337,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8740615988793566517}
   m_Layer: 0
-  m_Name: Team_B
+  m_Name: Team_B_Outfit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
