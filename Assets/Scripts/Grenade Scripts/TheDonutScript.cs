@@ -87,7 +87,7 @@ using UnityEngine;
             //player.transform.parent = newParent.transform; //-------------------------------------
         }
         */
-        Rigidbody rb;
+        //Rigidbody rb;
         if (collision.gameObject.tag == "Player")
         {
             //collision.

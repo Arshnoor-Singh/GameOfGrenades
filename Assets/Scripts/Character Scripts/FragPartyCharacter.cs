@@ -19,6 +19,7 @@ public class FragPartyCharacter : MonoBehaviour
     public int EnemiesKilled = 0;
     public int deathCount = 0;
     public Text playerId;
+    public bool isAlive = true;
 
     public AudioStorageScript AudioScript;
     public AudioSource Audio;
@@ -61,6 +62,7 @@ public class FragPartyCharacter : MonoBehaviour
         if (players.playerObjects[playerID].GetComponentInChildren<FragPartyController>().Team != transform.GetComponent<FragPartyController>().Team)
         {
 
+
             Debug.Log("Damage dealt " + amount + " by " + playerID);
 
             _currentHealth -= amount; // Reduce the characters health by the amount of damage dealt
@@ -70,8 +72,9 @@ public class FragPartyCharacter : MonoBehaviour
             StartCoroutine(DamageImpact()); // Visual cue for damage taken
 
             // Kill the character if their health falls below 0
-            if (_currentHealth <= 0)
+            if (_currentHealth <= 0 && isAlive)
             {
+                isAlive = false;
                 players.playerObjects[playerID].GetComponentInChildren<FragPartyCharacter>().KillPoint();
                 Kill();
             }
@@ -93,9 +96,9 @@ public class FragPartyCharacter : MonoBehaviour
     // Kill the character and trigger their respawning
     public void Kill()
     {
-        deathCount += 1;
-        PlayKillAudio();
+        deathCount += 1;      
         StartCoroutine(ActivateRagdollAndRespawn()); //This fucntion activates the ragdoll death and then respawns the player
+        PlayKillAudio();
     }
 
     void PlayKillAudio()
@@ -110,6 +113,7 @@ public class FragPartyCharacter : MonoBehaviour
     {
         _currentHealth = 100;
         Health.currentLife = _currentHealth;
+        isAlive = true;
         // Reset the characters health
         // Reset the characters grenade inventory
     }
@@ -129,7 +133,7 @@ public class FragPartyCharacter : MonoBehaviour
         GetComponent<FragPartyController>().enabled = true;
         CharacterControl.enabled = true;
         Cinebrain.enabled = true;
-
+        isAlive = true;
         SpawnPlayer.Respawn(); //Respawns player
         ResetStats(); //Resets Stats
     }

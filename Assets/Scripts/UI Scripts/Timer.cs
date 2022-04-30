@@ -5,12 +5,17 @@ using UnityEngine.UI;
 
 public class Timer : MonoBehaviour
 {
+    public GameObject TimerObject;
     public float matchTime;
     public Text timer;
     UIControls menu;
 
     public bool TimerStart = true;
 
+    private void Awake()
+    {
+        TimerObject.SetActive(true);
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -21,6 +26,9 @@ public class Timer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (matchTime < 1f)
+            TimerStart = false;
+
         if (!menu.p.activeSelf && TimerStart)
         {
             Debug.Log("timer started");

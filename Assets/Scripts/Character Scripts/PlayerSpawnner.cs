@@ -10,7 +10,7 @@ public class PlayerSpawnner : MonoBehaviour
    
     public GameObject PlayerPrefab;
 
-    public GameObject[] spawnPoint;
+    public GameObject[] spawnPoint = new GameObject[4];
     public GameObject[] playerObjects = new GameObject[4];
 
     string[] _player = { "Player 1", "Player 2", "Player 3", "Player 4" };
