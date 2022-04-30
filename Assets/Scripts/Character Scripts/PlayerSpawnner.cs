@@ -20,13 +20,16 @@ public class PlayerSpawnner : MonoBehaviour
 
     private void Start()
     {
+        _playerManager = GetComponent<PlayerInputManager>(); 
+        StartCoroutine(setplayerprefab()); // This is to avoid any early instantiation of player
+    }
+
+    public void InitiateSpawnPoints()
+    {
         spawnPoint[0] = GameObject.Find("Spawn 1");
         spawnPoint[1] = GameObject.Find("Spawn 2");
         spawnPoint[2] = GameObject.Find("Spawn 3");
         spawnPoint[3] = GameObject.Find("Spawn 4");
-
-        _playerManager = GetComponent<PlayerInputManager>(); 
-        StartCoroutine(setplayerprefab()); // This is to avoid any early instantiation of player
     }
 
     IEnumerator setplayerprefab()
@@ -37,6 +40,7 @@ public class PlayerSpawnner : MonoBehaviour
 
     void OnPlayerJoined(PlayerInput player)
     {
+        GetComponentInChildren<Timer>().TimerStart = true;
         player.transform.position = spawnPoint[PlayerCount].transform.position; //Spawn players in their target points
         player.GetComponent<FragPartyController>().PlayerID = PlayerCount;
         playerObjects[player.playerIndex] = player.transform.parent.gameObject;

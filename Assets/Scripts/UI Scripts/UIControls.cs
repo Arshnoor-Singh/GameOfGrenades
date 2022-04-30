@@ -128,22 +128,11 @@ public class UIControls : MonoBehaviour
         resetMenuCounter();
         Debug.Log("pause function");
         
-        if (p.activeSelf)
+        if (qm.activeSelf)
         {
-
-            //Time.timeScale = 0f;
-            Debug.Log("time" + Time.timeScale);
-            //pauseCheck = true;
-            //return;
+            qm.SetActive(false);
         }
 
-        if (!p.activeSelf)
-        {
-            //Time.timeScale = 1f;
-            Debug.Log("time" + Time.timeScale);
-            //pauseCheck = false;
-            //return;
-        }
 
     }
 
@@ -193,7 +182,7 @@ public class UIControls : MonoBehaviour
                             string nom = optionsM1[selectedOption].name;
                             if (nom == "Quit")
                             {
-                                qm.SetActive(true);
+                                qm.SetActive(true);                                
                             }
                             else if (nom == "Back")
                             {
@@ -452,7 +441,8 @@ public class UIControls : MonoBehaviour
                 {
                     yesQ.transform.Find("Yes Glow").gameObject.SetActive(false);
                     noQ.transform.Find("No Glow").gameObject.SetActive(true);
-                    _input_.UINavigateRight = false;
+                   _input_.UINavigateRight = false;
+                   
                 }
 
                 else if (Input.GetKeyDown(KeyCode.Keypad4) || _input_.UINavigateLeft)
@@ -460,6 +450,7 @@ public class UIControls : MonoBehaviour
                     yesQ.transform.Find("Yes Glow").gameObject.SetActive(true);
                     noQ.transform.Find("No Glow").gameObject.SetActive(false);
                     _input_.UINavigateLeft = false;
+                    
                 }
 
                 else if ((Input.GetKeyDown(KeyCode.Space) || _input_.UISelect) && noQ.transform.Find("No Glow").gameObject.activeSelf)

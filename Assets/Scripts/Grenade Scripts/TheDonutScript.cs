@@ -79,19 +79,19 @@ using UnityEngine;
 
     public void OnCollisionEnter(Collision collision)
     {
-        /*
         if (collision.gameObject.tag == "Player")
         {
-            slowPlayer();
-            destroyDonut(true, false, false);
-            //player.transform.parent = newParent.transform; //-------------------------------------
+            collision.transform.GetComponent<FragPartyCharacter>().Damage(10, GB.GrenadeOwner);
+            StartCoroutine(destroyDonut());
         }
-        */
-        //Rigidbody rb;
-        if (collision.gameObject.tag == "Player")
-        {
-            //collision.
-        }
+        else
+            StartCoroutine(destroyDonut());
+    }
+
+    IEnumerator destroyDonut()
+    {
+        yield return new WaitForSeconds(GB.CookingTime);
+        Destroy(gameObject);
     }
 
     //slow players based on the script's 
