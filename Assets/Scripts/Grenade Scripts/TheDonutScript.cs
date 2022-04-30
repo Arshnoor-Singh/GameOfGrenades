@@ -61,7 +61,7 @@ using UnityEngine;
 
     public void Update()
     {
-        if (GB.CookingTime >= 0 && CanExplode)
+        if (_baseScript.CookingTime >= 0 && CanExplode)
         {
             explode();
         }
