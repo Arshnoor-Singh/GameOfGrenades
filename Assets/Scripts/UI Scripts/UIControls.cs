@@ -58,8 +58,9 @@ public class UIControls : MonoBehaviour
         fxTxt.text = fxIndex.ToString();
         brightnessTxt.text = brightnessIndex.ToString();
 
-        //yesQ = GameObject.Find("YES");
-        //noQ = GameObject.Find("NO");
+        yesQ = GameObject.Find("YES");
+        noQ = GameObject.Find("NO");
+
 
         dropdowns = GameObject.Find("Dropdowns");
 
@@ -182,7 +183,10 @@ public class UIControls : MonoBehaviour
                             string nom = optionsM1[selectedOption].name;
                             if (nom == "Quit")
                             {
-                                qm.SetActive(true);                                
+                                Application.Quit();
+                                //qm.SetActive(true);
+                                //p.SetActive(false);
+                                //quitting();
                             }
                             else if (nom == "Back")
                             {
@@ -192,7 +196,6 @@ public class UIControls : MonoBehaviour
                             {
                                 changeMenus(i + 1);
                             }
-
                             _input_.UISelect = false;
                         }
                     }
@@ -263,11 +266,13 @@ public class UIControls : MonoBehaviour
                                 changeMenus(0);
                             }
                             _input_.UISelect = false;
+                            Debug.Log("11111111");
                         }
                     }
                     else
                     {
                         optionsM2[i].transform.Find("Glow").gameObject.SetActive(false);
+                        Debug.Log("22222222222");
                     }
                 }
             }
@@ -434,42 +439,47 @@ public class UIControls : MonoBehaviour
                     }
                 }
             }
+           
+        }
 
-            if (p.activeSelf && qm.activeSelf)
+        if (p.activeSelf && qm.activeSelf)
+        {
+            if (Input.GetKeyDown(KeyCode.Keypad6) || _input_.UINavigateRight)
             {
-                if (Input.GetKeyDown(KeyCode.Keypad6) || _input_.UINavigateRight)
-                {
-                    yesQ.transform.Find("Yes Glow").gameObject.SetActive(false);
-                    noQ.transform.Find("No Glow").gameObject.SetActive(true);
-                   _input_.UINavigateRight = false;
-                   
-                }
-
-                else if (Input.GetKeyDown(KeyCode.Keypad4) || _input_.UINavigateLeft)
-                {
-                    yesQ.transform.Find("Yes Glow").gameObject.SetActive(true);
-                    noQ.transform.Find("No Glow").gameObject.SetActive(false);
-                    _input_.UINavigateLeft = false;
-                    
-                }
-
-                else if ((Input.GetKeyDown(KeyCode.Space) || _input_.UISelect) && noQ.transform.Find("No Glow").gameObject.activeSelf)
-                {
-                    closeQuitMenu();
-                    _input_.UISelect = false;
-                }
-
-                else if ((Input.GetKeyDown(KeyCode.Space) || _input_.UISelect) && yesQ.transform.Find("Yes Glow").gameObject.activeSelf)
-                {
-                    Debug.Log("QUIT_GAME");
-                    Application.Quit();
-                    _input_.UISelect = false;
-                }
+                yesQ.transform.Find("Yes Glow").gameObject.SetActive(false);
+                noQ.transform.Find("No Glow").gameObject.SetActive(true);
+                _input_.UINavigateRight = false;
 
             }
+
+            else if (Input.GetKeyDown(KeyCode.Keypad4) || _input_.UINavigateLeft)
+            {
+                yesQ.transform.Find("Yes Glow").gameObject.SetActive(true);
+                noQ.transform.Find("No Glow").gameObject.SetActive(false);
+                _input_.UINavigateLeft = false;
+
+            }
+
+            else if ((Input.GetKeyDown(KeyCode.Space) || _input_.UISelect) && noQ.transform.Find("No Glow").gameObject.activeSelf)
+            {
+                qm.SetActive(false);
+                p.SetActive(true);
+                _input_.UISelect = false;
+            }
+
+            else if ((Input.GetKeyDown(KeyCode.Space) || _input_.UISelect) && yesQ.transform.Find("Yes Glow").gameObject.activeSelf)
+            {
+                Debug.Log("QUIT_GAME");
+                Application.Quit();
+                _input_.UISelect = false;
+            }
+
         }
-       
     }
+
+    
+
+
     public void changeMenus(int n)
     {
         currentMenu = n;

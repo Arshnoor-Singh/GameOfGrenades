@@ -81,7 +81,7 @@ using UnityEngine;
     {
         if (collision.gameObject.tag == "Player")
         {
-            collision.transform.GetComponent<FragPartyCharacter>().Damage(10, GB.GrenadeOwner);
+            collision.transform.GetComponent<FragPartyCharacter>().Damage(10, _baseScript.GrenadeOwner);
             StartCoroutine(destroyDonut());
         }
         else
@@ -90,7 +90,7 @@ using UnityEngine;
 
     IEnumerator destroyDonut()
     {
-        yield return new WaitForSeconds(GB.CookingTime);
+        yield return new WaitForSeconds(_baseScript.CookingTime);
         Destroy(gameObject);
     }
 

@@ -40,12 +40,11 @@ public class ScoreBoard : MonoBehaviour
             }
         }
 
-        Team_A_Score = playerKills[0] + playerKills[1];
-        Team_B_Score = playerKills[2] + playerKills[3];
+        Team_A_Score = playerKills[0] + playerKills[2];
+        Team_B_Score = playerKills[1] + playerKills[3];
 
         if (players.playerObjects[0] != null)
-            Player_1_Deaths = players.playerObjects[0].GetComponentInChildren<FragPartyCharacter>().deathCount.ToString();
-            
+            Player_1_Deaths = players.playerObjects[0].GetComponentInChildren<FragPartyCharacter>().deathCount.ToString();            
 
         if (players.playerObjects[1] != null)
             Player_2_Deaths = players.playerObjects[1].GetComponentInChildren<FragPartyCharacter>().deathCount.ToString();
