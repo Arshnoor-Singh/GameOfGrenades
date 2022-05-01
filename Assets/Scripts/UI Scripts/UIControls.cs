@@ -58,8 +58,8 @@ public class UIControls : MonoBehaviour
         fxTxt.text = fxIndex.ToString();
         brightnessTxt.text = brightnessIndex.ToString();
 
-        yesQ = GameObject.Find("YES");
-        noQ = GameObject.Find("NO");
+        //yesQ = GameObject.Find("YES");
+        //noQ = GameObject.Find("NO");
 
         dropdowns = GameObject.Find("Dropdowns");
 

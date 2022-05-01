@@ -1013,10 +1013,30 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3917685548280761117, guid: 0adb79ec59ddae348bc93c96f9c48fca,
+        type: 3}
+      propertyPath: matchTime
+      value: 600
+      objectReference: {fileID: 0}
+    - target: {fileID: 4632270128381969564, guid: 0adb79ec59ddae348bc93c96f9c48fca,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 4632270128381969564, guid: 0adb79ec59ddae348bc93c96f9c48fca,
+        type: 3}
+      propertyPath: m_Size.z
+      value: 1000
+      objectReference: {fileID: 0}
     - target: {fileID: 5496899890863485672, guid: 0adb79ec59ddae348bc93c96f9c48fca,
         type: 3}
       propertyPath: m_Name
       value: THE GAME
+      objectReference: {fileID: 0}
+    - target: {fileID: 5496899890863485672, guid: 0adb79ec59ddae348bc93c96f9c48fca,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5784078440416360457, guid: 0adb79ec59ddae348bc93c96f9c48fca,
         type: 3}
