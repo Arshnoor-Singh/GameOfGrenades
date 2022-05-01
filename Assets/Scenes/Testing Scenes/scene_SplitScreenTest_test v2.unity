@@ -1036,7 +1036,7 @@ PrefabInstance:
     - target: {fileID: 5105842817956063299, guid: 0adb79ec59ddae348bc93c96f9c48fca,
         type: 3}
       propertyPath: m_Volume
-      value: 0.05
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 5112123324413839149, guid: 0adb79ec59ddae348bc93c96f9c48fca,
         type: 3}
@@ -1068,6 +1068,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7776742902682662592, guid: 0adb79ec59ddae348bc93c96f9c48fca,
+        type: 3}
+      propertyPath: BGMaudio
+      value: 
+      objectReference: {fileID: 1091546330}
     - target: {fileID: 9130513111291217091, guid: 0adb79ec59ddae348bc93c96f9c48fca,
         type: 3}
       propertyPath: m_IsActive
@@ -7805,6 +7810,12 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!82 &1091546330 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 5105842817956063299, guid: 0adb79ec59ddae348bc93c96f9c48fca,
+    type: 3}
+  m_PrefabInstance: {fileID: 220999610}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &1121430038
 Mesh:
   m_ObjectHideFlags: 0

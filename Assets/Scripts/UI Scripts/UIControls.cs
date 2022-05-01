@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class UIControls : MonoBehaviour
 {
+    public AudioSource BGMaudio;
     public GameObject quitbutton;
     public GameObject p;
     public GameObject qm;
@@ -223,6 +224,8 @@ public class UIControls : MonoBehaviour
                                 counter++;
                                 if (counter < 11)
                                 {
+                                    BGMaudio.volume = (float)counter / 10;
+                                    Debug.Log("counter value" + counter);
                                     optionsM2[selectedOption].transform.Find("Counter").gameObject.GetComponent<Text>().text = counter.ToString();
                                     optionsM2[selectedOption].transform.Find("Bar Value").gameObject.GetComponent<Image>().sprite = SettingsBars[counter];
                                 }
@@ -242,6 +245,8 @@ public class UIControls : MonoBehaviour
                                 counter--;
                                 if (counter >= 0)
                                 {
+                                    BGMaudio.volume = (float)counter / 10;
+                                    Debug.Log("counter value" + counter);
                                     optionsM2[selectedOption].transform.Find("Counter").gameObject.GetComponent<Text>().text = counter.ToString();
                                     optionsM2[selectedOption].transform.Find("Bar Value").gameObject.GetComponent<Image>().sprite = SettingsBars[counter];
                                 }
@@ -266,13 +271,11 @@ public class UIControls : MonoBehaviour
                                 changeMenus(0);
                             }
                             _input_.UISelect = false;
-                            Debug.Log("11111111");
                         }
                     }
                     else
                     {
                         optionsM2[i].transform.Find("Glow").gameObject.SetActive(false);
-                        Debug.Log("22222222222");
                     }
                 }
             }
