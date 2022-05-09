@@ -7,28 +7,44 @@ public class ScoreBoard : MonoBehaviour
     public AudioStorageScript AudioScript;
     public AudioSource Audio;
 
-    private string Player_1_Deaths;
-    private string Player_2_Deaths;
-    private string Player_3_Deaths;
-    private string Player_4_Deaths;
+    public string Player_1_Deaths;
+    public string Player_2_Deaths;
+    public string Player_3_Deaths;
+    public string Player_4_Deaths;
 
-    [SerializeField] public int Team_A_Score;
-    [SerializeField] public int Team_B_Score;
+    public int[] playerKills = new int[4];
+
+    [SerializeField] public int Team_A_Score = 0;
+    [SerializeField] public int Team_B_Score = 0;
+    [SerializeField] public int VictoryTarget = 15;
+
 
     PlayerSpawnner players;
 
     // Start is called before the first frame update
     void Start()
     {
-        players = FindObjectOfType<PlayerSpawnner>();
+        players = GetComponent<PlayerSpawnner>();
         Audio = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(players.playerObjects[0] != null)
-            Player_1_Deaths = players.playerObjects[0].GetComponentInChildren<FragPartyCharacter>().deathCount.ToString();
+
+        for(int i = 0; i < playerKills.Length; i++)
+        {
+            if(players.playerObjects[i] != null)
+            {
+                playerKills[i] = players.playerObjects[i].GetComponentInChildren<FragPartyCharacter>().EnemiesKilled;
+            }
+        }
+
+        Team_A_Score = playerKills[0] + playerKills[2];
+        Team_B_Score = playerKills[1] + playerKills[3];
+
+        if (players.playerObjects[0] != null)
+            Player_1_Deaths = players.playerObjects[0].GetComponentInChildren<FragPartyCharacter>().deathCount.ToString();            
 
         if (players.playerObjects[1] != null)
             Player_2_Deaths = players.playerObjects[1].GetComponentInChildren<FragPartyCharacter>().deathCount.ToString();
@@ -39,13 +55,9 @@ public class ScoreBoard : MonoBehaviour
         if (players.playerObjects[3] != null)
             Player_4_Deaths = players.playerObjects[3].GetComponentInChildren<FragPartyCharacter>().deathCount.ToString();
 
-        if (players.playerObjects[2] != null && players.playerObjects[3] != null)
-            Team_A_Score = (players.playerObjects[2].GetComponentInChildren<FragPartyCharacter>().deathCount + players.playerObjects[3].GetComponentInChildren<FragPartyCharacter>().deathCount);
+        
 
-        if (players.playerObjects[0] != null && players.playerObjects[1] != null)
-            Team_B_Score = (players.playerObjects[0].GetComponentInChildren<FragPartyCharacter>().deathCount + players.playerObjects[1].GetComponentInChildren<FragPartyCharacter>().deathCount);
-
-        if(Team_A_Score == 1 || Team_B_Score == 1)
+        if(Team_A_Score == VictoryTarget || Team_B_Score == VictoryTarget)
         {
             PlayVictoryAudio();
         }

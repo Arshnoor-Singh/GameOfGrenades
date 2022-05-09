@@ -138,6 +138,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: SplitScreen_NestedPlayerPrefab
       objectReference: {fileID: 0}
+    - target: {fileID: 1586322347179633869, guid: 96c056073a95431479ce11da723393f5,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5863101190644368388, guid: 96c056073a95431479ce11da723393f5,
         type: 3}
       propertyPath: m_RootOrder

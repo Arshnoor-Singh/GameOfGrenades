@@ -5,7 +5,8 @@
 *  Description:        
 */
 
-using System;
+using System.Collections;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
@@ -26,29 +27,37 @@ using UnityEngine.InputSystem;
 #endregion
 public class FragPartyController : MonoBehaviour
 {
+	// publicly declared variables
 	#region PublicFields
 	
-	[Header("Player")]
+	[Header("Player Manager")]
+	[Tooltip("The integer ID assigned to the player character at runtime")]
 	public int PlayerID;
+	[Tooltip("The team ID string assigned to the player at runtime")]
 	public string Team;
+	
+	[Space(10)]
+	[Header("Player Locomotion")]
 	[Tooltip("Movement speed of the character in m/s")]
 	public float moveSpeed = 6.0f;
 	[Tooltip("Slide time of the character in seconds")] 
 	public float slideTime = 0.6f;
 	[Tooltip("Dive time of the character in seconds")]
 	public float diveTime = 0.4f;
+	
+	[Space(10)]
 	[Tooltip("Boolean to set if the player should currently rotate to face away from the camera")]
 	public bool updateRotation = true;
 	[Tooltip("The speed the character and camera rotate in place")]
-	[Range(0.01f, 10f)]
-	public float rotationSpeed = 1f;
+	[Range(0.01f, 10f)] public float rotationSpeed = 1f;
 	[Tooltip("How fast the character turns to face movement direction")]
-	[Range(0.0f, 0.3f)]
-	public float rotationSmoothTime = 0.12f;
+	[Range(0.0f, 0.3f)] public float rotationSmoothTime = 0.12f;
 	[Tooltip("Acceleration and deceleration")]
 	public float speedChangeRate = 10.0f;
+	
+	[Space(10)]
 	[Tooltip("The mass of the player when applying force")]
-	public float mass;
+	public float mass = 3f;
 
 	[Space(10)]
 	[Tooltip("The height the player can jump")]
@@ -57,6 +66,7 @@ public class FragPartyController : MonoBehaviour
 	public float gravity = -15.0f;
 
 	[Space(10)]
+	[Header("Player Timeouts")]
 	[Tooltip("Time required to pass before being able to jump again. Set to 0f to instantly jump again")]
 	public float jumpTimeout = 0.50f;
 	[Tooltip("Time required to pass before entering the fall state. Useful for walking down stairs")]
@@ -90,21 +100,28 @@ public class FragPartyController : MonoBehaviour
 	
 	#endregion
 
+	// privately declared variables
 	#region PrivateFields
 
 	// cinemachine
 	private float _cinemachineTargetYaw;
 	private float _cinemachineTargetPitch;
 
-	// player
+	// player locomotion
 	private float _speed;
-	private float _animationBlendHorizontal;
-	private float _animationBlendVertical;
 	private float _targetRotation = 0.0f;
 	private float _rotationVelocity;
 	private float _verticalVelocity;
 	private float _terminalVelocity = 53.0f;
-	private Vector3 _forceVector =Vector3.zero;
+	private bool _lockMovement = false;
+	
+	// animation blending fields
+	private float _animationBlendHorizontal;
+	private float _animationBlendVertical;
+	
+	// pseudo-physics fields
+	private Vector3 _forceVector = Vector3.zero;
+	private Vector3 _appliedForceVector = Vector3.zero;
 	private bool _impacted = false;
 
 	// timeout delta-time
@@ -126,12 +143,19 @@ public class FragPartyController : MonoBehaviour
 	private int _animIDDive;
 	private int _animIDToss;
 
+	// input threshold
 	private const float _THRESHOLD = 0.01f;
 
+	// animator component bool
 	private bool _hasAnimator;
-	
+
+	//UI
+	private UIControls _ui;
+	public bool unpause = true;
+
 	#endregion
 
+	// object component reference variables
 	#region ComponentReferences
 
 	private Animator _animator;
@@ -139,77 +163,109 @@ public class FragPartyController : MonoBehaviour
 	private FragPartyInputs _input;
 	private GrenadeInventory _inventory;
 	[SerializeField] private Transform _grenadeRoot;
+	[SerializeField] private GameObject _teamAOutfit;
+	[SerializeField] private GameObject _teamBOutfit;
 
 	#endregion
 
 	#region UnityFunctions
 
+	// called when the script is loaded, used to initialize variables before the application starts
 	private void Awake()
 	{
-		// get a reference to our main camera
+		// get a reference to the main camera if a separate reference isn't already provided in the inspector
 		if (playerCamera == null)
 		{
 			playerCamera = GameObject.FindGameObjectWithTag("MainCamera");
 		}
 	}
 
+	// called on the frame when a script is enabled just before any of the Update methods are called the first time.
 	private void Start()
 	{
+		// set component references
+		_ui = FindObjectOfType<UIControls>();
 		_hasAnimator = TryGetComponent(out _animator);
 		_controller = GetComponent<CharacterController>();
 		_input = GetComponent<FragPartyInputs>();
 		_inventory = GetComponent<GrenadeInventory>();
-		_inventory.Init();
-
+		
 		AssignAnimationIDs();
 
-		// reset our timeouts on start
+		// reset locomotion timeouts on start
 		_jumpTimeoutDelta = jumpTimeout;
 		_fallTimeoutDelta = fallTimeout;
 		
-		// reset our locomotion timers on start
+		// reset locomotion timers on start
 		_slideTime = slideTime;
 		_diveTime = diveTime;
 
 		TeamAssign();
 	}
 
+	// called once every frame, if the MonoBehaviour is enabled
 	private void Update()
 	{
-		_hasAnimator = TryGetComponent(out _animator);
-		
-		JumpAndGravity();
-		GroundedCheck();
-		Slide();
-		Dive();
-		if (!_animator.GetBool(_animIDSlide) && !_animator.GetBool(_animIDDive))
+		if (!_ui.p.activeSelf)
 		{
-			Move();
+			JumpAndGravity();
+			GroundedCheck();
+			Slide();
+			Dive();
+
+			if (!_animator.GetBool(_animIDSlide) && !_animator.GetBool(_animIDDive))
+			{
+				Move();
+			}
+			Toss();
 		}
-		Toss();
-		
+
+		PauseMenu();
+
 		_inventory.UpdateInventory();
 	}
 
 	private void LateUpdate()
 	{
-		CameraRotation();
+		if (!_ui.p.activeSelf)
+			CameraRotation();
 	}
-	
+
 	#endregion
 
 	#region StandardFunctions
 
-	private void TeamAssign()
-    {
-		if (PlayerID == 0 || PlayerID == 1)
+	private void PauseMenu()
+	{
+
+		if (_input.pause)    //Input.GetKeyDown(KeyCode.Escape)
 		{
-			Team = "Team_A";
+			Debug.Log("pause initiated");
+			_ui.pauseMenu();
 		}
 
-		if (PlayerID == 2 || PlayerID == 3)
+		_input.PauseInput(false);
+		//if (_input.pause && !_ui.pauseCheck)    //Input.GetKeyDown(KeyCode.Escape)
+		//{
+		//	unpause = false;
+		//	Debug.Log("pause initiated");
+		//	_ui.pauseMenu();
+		//}
+	}
+	private void TeamAssign()
+    {
+		if (PlayerID == 0 || PlayerID == 2)
+		{
+			Team = "Team_A";
+			_teamAOutfit.SetActive(true);
+			Debug.Log("Team A");
+		}
+
+		if (PlayerID == 1 || PlayerID == 3)
 		{
 			Team = "Team_B";
+			_teamBOutfit.SetActive(true);
+			Debug.Log("Team B");
 		}
 	}
 	
@@ -245,7 +301,10 @@ public class FragPartyController : MonoBehaviour
 		// if there is an input and camera position is not fixed
 		if (_input.look.sqrMagnitude >= _THRESHOLD && !lockCameraPosition)
 		{
-			_cinemachineTargetYaw += _input.look.x * Time.deltaTime;
+			if (!_animator.GetBool(_animIDSlide) && !_animator.GetBool(_animIDDive))
+			{
+				_cinemachineTargetYaw += _input.look.x * Time.deltaTime;
+			}
 			_cinemachineTargetPitch += _input.look.y * Time.deltaTime;
 		}
 
@@ -267,7 +326,7 @@ public class FragPartyController : MonoBehaviour
 			transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f); // rotate to face input direction relative to camera position
 		}
 
-		if (!_impacted)
+		if (!_lockMovement && !_impacted)
 		{
 			
 			float targetSpeed = moveSpeed; // set target speed based on move speed
@@ -326,16 +385,19 @@ public class FragPartyController : MonoBehaviour
 				_animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
 			}
 		}
-		else
+		else  if (_impacted)
 		{
 			// if sufficient force remains, move the character
 			if (_forceVector.magnitude > 0.2f)
 			{
 				// Move the character according to the added force
-				_controller.Move(_forceVector * Time.deltaTime);
+				_controller.Move(_appliedForceVector * Time.deltaTime);
 				
+				// Apply gravity to force vector
+				_appliedForceVector = new Vector3(_forceVector.x, _appliedForceVector.y + gravity * Time.deltaTime, _forceVector.z);
+
 				// Reduce the added force
-				_forceVector = Vector3.Lerp(_forceVector, Vector3.zero, 5 * Time.deltaTime);
+				_forceVector = Vector3.Lerp(_forceVector, Vector3.zero, mass * Time.deltaTime);
 			}
 			else
 			{
@@ -348,7 +410,7 @@ public class FragPartyController : MonoBehaviour
 
 	private void JumpAndGravity()
 	{
-		if (grounded && !_impacted)
+		if (grounded)
 		{
 			// reset the fall timeout timer
 			_fallTimeoutDelta = fallTimeout;
@@ -367,7 +429,7 @@ public class FragPartyController : MonoBehaviour
 			}
 
 			// Jump
-			if (_input.jump && _jumpTimeoutDelta <= 0.0f && !_animator.GetBool(_animIDSlide) && !_animator.GetBool(_animIDDive))
+			if (_input.jump && _jumpTimeoutDelta <= 0.0f && !_animator.GetBool(_animIDSlide) && !_animator.GetBool(_animIDDive)  && !_impacted)
 			{
 				// the square root of H * -2 * G = how much velocity needed to reach desired height
 				_verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
@@ -441,6 +503,8 @@ public class FragPartyController : MonoBehaviour
                 
                 // set the slide timer
                 _slideTime = slideTime;
+
+                _lockMovement = true;
             }
 		}
 		else if (_animator.GetBool(_animIDSlide) && _slideTime > 0f)
@@ -474,7 +538,6 @@ public class FragPartyController : MonoBehaviour
 			}
 
 			// move the player
-			// _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 			_controller.Move(transform.forward * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 		}
 		else
@@ -512,6 +575,8 @@ public class FragPartyController : MonoBehaviour
                 
                 // set the dive timer
                 _diveTime = diveTime;
+
+                _lockMovement = true;
             }
 		}
 		else if (_animator.GetBool(_animIDDive) && _diveTime > 0f)
@@ -605,11 +670,29 @@ public class FragPartyController : MonoBehaviour
 	}
 
 	// Call this function to add an impact force:
-	void AddForce(Vector3 direction, float force)
+	public void AddForce(Vector3 direction, float force)
 	{
 		direction.Normalize();
-		if (direction.y < 0) direction.y = -direction.y; // reflect down force on the ground
+		if (grounded && direction.y < 0) direction.y = -direction.y; // reflect down force on the ground
 		_forceVector += direction.normalized * force / mass;
+		_appliedForceVector = _forceVector;
+		_impacted = true;
+	}
+
+	public void ForceSlide()
+	{
+		_input.slide = true;
+	}
+
+	public void ForceDive()
+	{
+		_input.dive = true;
+	}
+
+	// unlock that characters ability to move
+	public void UnlockMovement()
+	{
+		_lockMovement = false;
 	}
 	
 	#endregion
@@ -634,6 +717,6 @@ public class FragPartyController : MonoBehaviour
 		var position = transform.position;
 		Gizmos.DrawSphere(new Vector3(position.x, position.y - groundedOffset, position.z), groundedRadius);
 	}
-	
+
 	#endregion
 }

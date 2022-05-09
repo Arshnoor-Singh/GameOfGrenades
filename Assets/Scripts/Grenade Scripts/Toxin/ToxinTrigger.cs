@@ -5,8 +5,12 @@ using UnityEngine;
 public class ToxinTrigger : MonoBehaviour
 {
     public float duration = 10f;
-
-    private float time;
+    public float DamageCD;
+    private bool PlayerIsIn = false;
+    private float Lifetime;
+    private float PlayerTimer;
+    private FragPartyCharacter FPC;
+    public int playerID;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,10 +20,21 @@ public class ToxinTrigger : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        time += Time.deltaTime;
-        if(time >= duration)
+        Lifetime += Time.deltaTime;
+        if(Lifetime >= duration)
         {
             Destroy(gameObject);
+        }
+
+        if(PlayerIsIn)
+        {
+            PlayerTimer += Time.deltaTime;
+        }
+
+        if(PlayerTimer>= DamageCD)
+        {
+            FPC.Damage(20, playerID);
+            PlayerTimer = 0;
         }
     }
 
@@ -27,7 +42,9 @@ public class ToxinTrigger : MonoBehaviour
     {
         if(other.gameObject.tag == "Player")
         {
+            FPC = other.GetComponent<FragPartyCharacter>();
             //EffectThePlayer
+            PlayerIsIn = true;
         }
     }
     private void OnTriggerExit(Collider other)
@@ -35,6 +52,8 @@ public class ToxinTrigger : MonoBehaviour
         if (other.gameObject.tag == "Player")
         {
             //StopEffectingThePlayer
+            PlayerTimer = 0;
+            PlayerIsIn = false;
         }
     }
 }
